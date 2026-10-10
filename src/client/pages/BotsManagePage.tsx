@@ -53,7 +53,7 @@ export function BotsManagePage() {
     <div className="content-container">
       <PageHero
         title="Connected Bots"
-        subtitle="Rename or remove the bots connected to your tasks"
+        subtitle="重新命名或移除与你任务相关的机器人"
       >
         <button className="btn btn-primary" onClick={() => navigate("wizard")}>
           + Connect Bot
@@ -64,7 +64,7 @@ export function BotsManagePage() {
         {loading && <div className="skeleton-row" />}
         {!loading && bots?.length === 0 && (
           <p className="text-muted" style={{ fontSize: 13, textAlign: "center", padding: "24px 0" }}>
-            No bots configured yet — add one from the task wizard.
+            还没有配置机器人——从任务向导里添加一个。
           </p>
         )}
         {bots?.map((bot) => (
@@ -81,10 +81,10 @@ export function BotsManagePage() {
                     autoFocus
                   />
                   <button className="btn btn-primary btn-sm" onClick={() => saveRename(bot.id)}>
-                    Save
+                    保存
                   </button>
                   <button className="btn btn-secondary btn-sm" onClick={() => setRenaming(null)}>
-                    Cancel
+                    取消
                   </button>
                 </div>
               ) : (

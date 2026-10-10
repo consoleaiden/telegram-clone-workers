@@ -82,7 +82,7 @@ export function EmptyStatePage() {
           <div className="metric-val">{totalCopied.toLocaleString()}</div>
         </div>
         <div className="metric-card">
-          <div className="metric-title">Connected Bots</div>
+          <div className="metric-title">连接机器人</div>
           <div className="metric-val">{bots?.length ?? 0}</div>
         </div>
       </div>

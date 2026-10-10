@@ -298,7 +298,7 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
   return (
     <div className="content-container">
       <PageHero
-        title="New Forward Task"
+        title="新建任务"
         subtitle="Connect a bot, point it at a chat, and configure copy mode"
       >
         <button className="btn btn-secondary" onClick={() => navigate("")}>
@@ -313,9 +313,9 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
             <span className={`step-pill ${hasBot ? "done" : "active"}`}>
               {hasBot ? "✓" : "1"}
             </span>
-            <span>1. Select Telegram Bot</span>
+            <span>1. 选择 Telegram Bot</span>
           </div>
-          {hasBot && <span className="badge badge-live">Connected</span>}
+          {hasBot && <span className="badge badge-live">连接</span>}
         </div>
 
         {!hasBot ? (
@@ -331,7 +331,7 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
                     rel="noopener noreferrer"
                     style={{ fontSize: 11.5, color: "var(--accent)", textDecoration: "none" }}
                   >
-                    Get token from @BotFather ↗
+                    从@BotFather获取token ↗
                   </a>
                 </div>
                 <input
@@ -344,7 +344,7 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
                 />
               </div>
               <p className="text-muted" style={{ fontSize: 12, marginBottom: 10 }}>
-                Token is verified directly with Telegram API to check permissions, bot username, and active workloads.
+                令牌通过Telegram API直接验证，以检查权限、机器人程序用户名和活动工作负载。
               </p>
               {botError && (
                 <div style={{ marginBottom: 10 }}>

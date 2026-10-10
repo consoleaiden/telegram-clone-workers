@@ -325,7 +325,7 @@ export function AppNav() {
           >
             <div className="sidebar-nav-item-left">
               <BotsIcon />
-              <span>Connected Bots</span>
+              <span>连接机器人</span>
             </div>
           </button>
 
