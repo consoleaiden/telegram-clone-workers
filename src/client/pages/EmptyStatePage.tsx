@@ -12,10 +12,10 @@ import type { BotSummary, TaskScope, TaskSummary } from "../../shared/rpcTypes";
 type TaskCategory = "all" | TaskScope;
 
 const CATEGORY_LABELS: Record<TaskCategory, string> = {
-  all: "All",
-  backfill_only: "Backfill only",
-  live: "Live only",
-  live_and_backfill: "Backfill + Live",
+  all: "全部",
+  backfill_only: "仅回填",
+  live: "仅实时",
+  live_and_backfill: "回填 + 实时",
 };
 
 export function EmptyStatePage() {
@@ -40,13 +40,13 @@ export function EmptyStatePage() {
       }
       const res = await api.patch<TaskSummary>(`/api/tasks/${task.id}`, patchBody);
       if (res.ok) {
-        toast.show("success", `Paused "${getTaskDisplayInfo(task).title}". Moved to Paused Tasks.`);
+        toast.show("success", `已暂停「${getTaskDisplayInfo(task).title}」并移至已暂停任务。`);
         await refetch();
       } else {
-        toast.show("error", res.description ?? "Failed to pause task");
+        toast.show("error", res.description ?? "暂停任务失败");
       }
     } catch {
-      toast.show("error", "Network error while pausing task");
+      toast.show("error", "暂停任务时发生网络错误");
     } finally {
       setPausingId(null);
     }
@@ -63,22 +63,22 @@ export function EmptyStatePage() {
   return (
     <div className="content-container">
       <PageHero
-        title="Active Tasks"
-        subtitle="Real-time forwarding & catch-up backfills"
+        title="进行中的任务"
+        subtitle="实时转发与历史补齐回填"
       >
         <button className="btn btn-primary" onClick={() => navigate("wizard")}>
-          + New Task
+          + 新建任务
         </button>
       </PageHero>
 
       {/* Metrics Row */}
       <div className="metric-grid">
         <div className="metric-card">
-          <div className="metric-title">Active Tasks</div>
+          <div className="metric-title">进行中的任务</div>
           <div className="metric-val">{activeTasks.length}</div>
         </div>
         <div className="metric-card">
-          <div className="metric-title">Messages Copied</div>
+          <div className="metric-title">已复制消息</div>
           <div className="metric-val">{totalCopied.toLocaleString()}</div>
         </div>
         <div className="metric-card">
@@ -91,9 +91,9 @@ export function EmptyStatePage() {
       <div style={{ marginBottom: 24 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
           <h2 style={{ fontSize: 13, fontWeight: 700, color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-            Running Pipelines
+            运行中的流水线
           </h2>
-          <span style={{ fontSize: 11, color: "var(--text-dim)" }}>Auto-refreshing</span>
+          <span style={{ fontSize: 11, color: "var(--text-dim)" }}>自动刷新中</span>
         </div>
 
         {/* Category Filter Buttons */}
@@ -108,19 +108,19 @@ export function EmptyStatePage() {
             className={`btn-filter-pill${selectedCategory === "backfill_only" ? " is-active" : ""}`}
             onClick={() => setSelectedCategory("backfill_only")}
           >
-            Backfill only <span className="pill-count">{countBackfill}</span>
+            仅回填 <span className="pill-count">{countBackfill}</span>
           </button>
           <button
             className={`btn-filter-pill${selectedCategory === "live" ? " is-active" : ""}`}
             onClick={() => setSelectedCategory("live")}
           >
-            Live only <span className="pill-count">{countLive}</span>
+            仅实时 <span className="pill-count">{countLive}</span>
           </button>
           <button
             className={`btn-filter-pill${selectedCategory === "live_and_backfill" ? " is-active" : ""}`}
             onClick={() => setSelectedCategory("live_and_backfill")}
           >
-            Backfill + Live <span className="pill-count">{countCombined}</span>
+            回填 + 实时 <span className="pill-count">{countCombined}</span>
           </button>
         </div>
 
@@ -128,9 +128,9 @@ export function EmptyStatePage() {
 
         {!tasksLoading && activeTasks.length === 0 && (
           <div className="card" style={{ textAlign: "center", padding: "40px 20px" }}>
-            <h3 style={{ fontSize: 16, marginBottom: 8 }}>No active tasks running</h3>
+            <h3 style={{ fontSize: 16, marginBottom: 8 }}>当前没有进行中的任务</h3>
             <p className="text-muted" style={{ marginBottom: 20, maxWidth: 420, margin: "0 auto 20px" }}>
-              All running and live-forwarding tasks appear here in real time.
+              所有正在运行和实时转发的任务都会实时显示在这里。
             </p>
             {pausedTasks.length > 0 && (
               <div
@@ -149,18 +149,18 @@ export function EmptyStatePage() {
                 }}
               >
                 <span>
-                  You have <strong>{pausedTasks.length} paused task{pausedTasks.length > 1 ? "s" : ""}</strong> on hold.
+                  你有 <strong>{pausedTasks.length} 个已暂停任务</strong>。
                 </span>
                 <button
                   className="btn btn-secondary btn-sm"
                   onClick={() => navigate("paused")}
                 >
-                  View Paused Tasks →
+                  查看已暂停任务 →
                 </button>
               </div>
             )}
             <button className="btn btn-primary" onClick={() => navigate("wizard")}>
-              + Create New Task
+              + 新建任务
             </button>
           </div>
         )}
@@ -168,10 +168,10 @@ export function EmptyStatePage() {
         {!tasksLoading && activeTasks.length > 0 && displayedTasks.length === 0 && (
           <div className="card" style={{ textAlign: "center", padding: "30px 20px" }}>
             <p className="text-muted" style={{ marginBottom: 12 }}>
-              No active tasks found in the <strong>{CATEGORY_LABELS[selectedCategory]}</strong> category.
+              在 <strong>{CATEGORY_LABELS[selectedCategory]}</strong> 分类下没有找到进行中的任务。
             </p>
             <button className="btn btn-secondary btn-sm" onClick={() => setSelectedCategory("all")}>
-              Show All ({countAll})
+              显示全部（{countAll}）
             </button>
           </div>
         )}
@@ -191,14 +191,14 @@ export function EmptyStatePage() {
                 <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                   <span>{title}</span>
                   {isBackfilling ? (
-                    <Badge variant="running" label={`Backfilling ${percent}%`} />
+                    <Badge variant="running" label={`回填中 ${percent}%`} />
                   ) : t.live_enabled ? (
-                    <Badge variant="live" label="Live" />
+                    <Badge variant="live" label="实时" />
                   ) : (
-                    <Badge variant="idle" label="Active" />
+                    <Badge variant="idle" label="进行中" />
                   )}
                   {t.backfill_status === "paused" && (
-                    <Badge variant="paused" label="Backfill Paused" />
+                    <Badge variant="paused" label="回填已暂停" />
                   )}
                 </div>
 
@@ -207,9 +207,9 @@ export function EmptyStatePage() {
                   style={{ padding: "4px 12px", fontSize: 12 }}
                   disabled={pausingId === t.id}
                   onClick={(e) => handlePause(e, t)}
-                  title="Pause task"
+                  title="暂停任务"
                 >
-                  {pausingId === t.id ? "Pausing…" : "⏸ Pause"}
+                  {pausingId === t.id ? "暂停中…" : "⏸ 暂停"}
                 </button>
               </div>
               <div className="task-detail" style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
@@ -221,12 +221,12 @@ export function EmptyStatePage() {
                 )}
                 {t.scope !== "live" && (
                   <span className="pill-stat" style={{ color: "var(--success)" }}>
-                    📦 {(t.processed ?? 0).toLocaleString()} copied
+                    📦 已复制 {(t.processed ?? 0).toLocaleString()}
                   </span>
                 )}
                 {t.scope !== "backfill_only" && (
                   <span className="pill-stat" style={{ color: "var(--info)" }}>
-                    ⚡ {(t.live_processed ?? 0).toLocaleString()} live
+                    ⚡ 实时 {(t.live_processed ?? 0).toLocaleString()}
                   </span>
                 )}
                 <span>·</span>

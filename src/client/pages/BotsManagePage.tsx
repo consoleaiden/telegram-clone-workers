@@ -24,7 +24,7 @@ export function BotsManagePage() {
     if (!confirming) return;
     const res = await api.del(`/api/bots/${confirming.bot.id}`);
     if (res.ok) {
-      toast.show("success", `Deleted @${confirming.bot.bot_username} and its tasks`);
+      toast.show("success", `已删除 @${confirming.bot.bot_username} 及其任务`);
     } else {
       toast.show("error", res.description);
     }
@@ -41,7 +41,7 @@ export function BotsManagePage() {
     if (!renameValue.trim()) return;
     const res = await api.patch(`/api/bots/${botId}`, { label: renameValue.trim() });
     if (res.ok) {
-      toast.show("success", "Bot note updated");
+      toast.show("success", "机器人备注已更新");
       refetch();
     } else {
       toast.show("error", res.description);
@@ -52,11 +52,11 @@ export function BotsManagePage() {
   return (
     <div className="content-container">
       <PageHero
-        title="Connected Bots"
+        title="已连接的机器人"
         subtitle="重新命名或移除与你任务相关的机器人"
       >
         <button className="btn btn-primary" onClick={() => navigate("wizard")}>
-          + Connect Bot
+          + 连接机器人
         </button>
       </PageHero>
 
@@ -77,7 +77,7 @@ export function BotsManagePage() {
                     style={{ flex: 1 }}
                     value={renameValue}
                     onChange={(e) => setRenameValue(e.target.value)}
-                    placeholder="Note (e.g. which chat this bot handles)"
+                    placeholder="备注（例如该机器人负责哪个聊天）"
                     autoFocus
                   />
                   <button className="btn btn-primary btn-sm" onClick={() => saveRename(bot.id)}>
@@ -96,24 +96,24 @@ export function BotsManagePage() {
                     <button
                       className="btn btn-secondary btn-sm"
                       onClick={() => setInspectingBot(bot)}
-                      title="Inspect what else this bot is doing"
+                      title="检查该机器人还在做什么"
                     >
-                      🔍 Inspect
+                      🔍 检查
                     </button>
                     <button className="btn btn-secondary btn-sm" onClick={() => startRename(bot)}>
-                      Rename
+                      重命名
                     </button>
                     <button className="btn btn-danger btn-sm" onClick={() => startDelete(bot)}>
-                      Delete
+                      删除
                     </button>
                   </div>
                 </>
               )}
             </div>
             <div className="task-detail">
-              <span>Bot ID: {bot.bot_id}</span>
+              <span>机器人 ID：{bot.bot_id}</span>
               <span>·</span>
-              <span>Added: {new Date(bot.created_at * 1000).toLocaleDateString()}</span>
+              <span>添加于：{new Date(bot.created_at * 1000).toLocaleDateString()}</span>
             </div>
           </div>
         ))}
@@ -122,19 +122,18 @@ export function BotsManagePage() {
       {confirming && (
         <div className="card" style={{ borderColor: "var(--danger)" }}>
           <div className="card-header">
-            <div className="card-title" style={{ color: "var(--danger)" }}>Confirm Delete</div>
+            <div className="card-title" style={{ color: "var(--danger)" }}>确认删除</div>
           </div>
           <p style={{ marginBottom: 16 }}>
-            Delete <strong>@{confirming.bot.bot_username}</strong>? This removes its webhook and permanently deletes{" "}
-            <strong>{confirming.taskCount}</strong> task{confirming.taskCount === 1 ? "" : "s"} that use it. This cannot be
-            undone.
+            删除 <strong>@{confirming.bot.bot_username}</strong>？这会移除其 webhook，并永久删除使用它的{" "}
+            <strong>{confirming.taskCount}</strong> 个任务。此操作无法撤销。
           </p>
           <div className="row">
             <button className="btn btn-danger" onClick={confirmDelete}>
-              Delete bot and {confirming.taskCount} task{confirming.taskCount === 1 ? "" : "s"}
+              删除机器人及其 {confirming.taskCount} 个任务
             </button>
             <button className="btn btn-secondary" onClick={() => setConfirming(null)}>
-              Cancel
+              取消
             </button>
           </div>
         </div>

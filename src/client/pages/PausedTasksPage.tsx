@@ -11,10 +11,10 @@ import type { TaskScope, TaskSummary } from "../../shared/rpcTypes";
 type TaskCategory = "all" | TaskScope;
 
 const CATEGORY_LABELS: Record<TaskCategory, string> = {
-  all: "All",
-  backfill_only: "Backfill only",
-  live: "Live only",
-  live_and_backfill: "Backfill + Live",
+  all: "全部",
+  backfill_only: "仅回填",
+  live: "仅实时",
+  live_and_backfill: "回填 + 实时",
 };
 
 export function PausedTasksPage() {
@@ -61,13 +61,13 @@ export function PausedTasksPage() {
     try {
       const res = await api.patch<TaskSummary>(`/api/tasks/${task.id}`, patchBody);
       if (res.ok) {
-        toast.show("success", `Resumed "${getTaskDisplayInfo(task).title}"`);
+        toast.show("success", `已恢复「${getTaskDisplayInfo(task).title}」`);
         await refetch();
       } else {
-        toast.show("error", res.description ?? "Failed to resume task");
+        toast.show("error", res.description ?? "恢复任务失败");
       }
     } catch {
-      toast.show("error", "Network error while resuming task");
+      toast.show("error", "恢复任务时发生网络错误");
     } finally {
       setResumingId(null);
     }
@@ -76,26 +76,26 @@ export function PausedTasksPage() {
   return (
     <div className="content-container">
       <PageHero
-        title="Paused Tasks"
-        subtitle="Tasks on hold — resume backfill or live forwarding anytime"
+        title="已暂停任务"
+        subtitle="暂停中的任务——随时恢复回填或实时转发"
       >
         <button className="btn btn-primary" onClick={() => navigate("wizard")}>
-          + New Task
+          + 新建任务
         </button>
       </PageHero>
 
       {/* Metrics Row */}
       <div className="metric-grid">
         <div className="metric-card">
-          <div className="metric-title">Paused Tasks</div>
+          <div className="metric-title">已暂停任务</div>
           <div className="metric-val">{pausedTasks.length}</div>
         </div>
         <div className="metric-card">
-          <div className="metric-title">Messages Copied</div>
+          <div className="metric-title">已复制消息</div>
           <div className="metric-val">{totalCopied.toLocaleString()}</div>
         </div>
         <div className="metric-card">
-          <div className="metric-title">Pending Messages</div>
+          <div className="metric-title">待处理消息</div>
           <div className="metric-val">
             {totalRemaining > 0 ? totalRemaining.toLocaleString() : "—"}
           </div>
@@ -121,10 +121,10 @@ export function PausedTasksPage() {
               letterSpacing: "0.05em",
             }}
           >
-            Tasks On Hold
+            暂停中的任务
           </h2>
           <span style={{ fontSize: 11, color: "var(--text-dim)" }}>
-            Click resume to put back into active queue
+            点击恢复即可重新加入进行中队列
           </span>
         </div>
 
@@ -140,19 +140,19 @@ export function PausedTasksPage() {
             className={`btn-filter-pill${selectedCategory === "backfill_only" ? " is-active" : ""}`}
             onClick={() => setSelectedCategory("backfill_only")}
           >
-            Backfill only <span className="pill-count">{countBackfill}</span>
+            仅回填 <span className="pill-count">{countBackfill}</span>
           </button>
           <button
             className={`btn-filter-pill${selectedCategory === "live" ? " is-active" : ""}`}
             onClick={() => setSelectedCategory("live")}
           >
-            Live only <span className="pill-count">{countLive}</span>
+            仅实时 <span className="pill-count">{countLive}</span>
           </button>
           <button
             className={`btn-filter-pill${selectedCategory === "live_and_backfill" ? " is-active" : ""}`}
             onClick={() => setSelectedCategory("live_and_backfill")}
           >
-            Backfill + Live <span className="pill-count">{countCombined}</span>
+            回填 + 实时 <span className="pill-count">{countCombined}</span>
           </button>
         </div>
 
@@ -160,16 +160,15 @@ export function PausedTasksPage() {
 
         {!loading && pausedTasks.length === 0 && (
           <div className="card" style={{ textAlign: "center", padding: "40px 20px" }}>
-            <h3 style={{ fontSize: 16, marginBottom: 8 }}>No paused tasks right now</h3>
+            <h3 style={{ fontSize: 16, marginBottom: 8 }}>当前没有已暂停的任务</h3>
             <p
               className="text-muted"
               style={{ marginBottom: 20, maxWidth: 440, margin: "0 auto 20px" }}
             >
-              When you pause an active sync or disable live forwarding, the task will appear here
-              with its exact progress saved, ready to resume whenever you want.
+              当你暂停某个进行中的同步或关闭实时转发后，该任务会带着精确的进度显示在这里，随时可以恢复。
             </p>
             <button className="btn btn-secondary btn-sm" onClick={() => navigate("")}>
-              ← View Active Tasks
+              ← 查看进行中的任务
             </button>
           </div>
         )}
@@ -177,11 +176,11 @@ export function PausedTasksPage() {
         {!loading && pausedTasks.length > 0 && displayedTasks.length === 0 && (
           <div className="card" style={{ textAlign: "center", padding: "30px 20px" }}>
             <p className="text-muted" style={{ marginBottom: 12 }}>
-              No paused tasks found in the <strong>{CATEGORY_LABELS[selectedCategory]}</strong>{" "}
-              category.
+              在 <strong>{CATEGORY_LABELS[selectedCategory]}</strong>{" "}
+              分类下没有找到已暂停的任务。
             </p>
             <button className="btn btn-secondary btn-sm" onClick={() => setSelectedCategory("all")}>
-              Show All ({countAll})
+              显示全部（{countAll}）
             </button>
           </div>
         )}
@@ -200,8 +199,8 @@ export function PausedTasksPage() {
               <div className="task-name">
                 <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                   <span>{title}</span>
-                  <Badge variant="paused" label="Paused" />
-                  {t.live_enabled && <Badge variant="live" label="Live Active" />}
+                  <Badge variant="paused" label="已暂停" />
+                  {t.live_enabled && <Badge variant="live" label="实时进行中" />}
                 </div>
 
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -210,9 +209,9 @@ export function PausedTasksPage() {
                     style={{ padding: "4px 12px", fontSize: 12 }}
                     disabled={resumingId === t.id}
                     onClick={(e) => handleResume(e, t)}
-                    title="Resume task execution"
+                    title="恢复任务执行"
                   >
-                    {resumingId === t.id ? "Resuming…" : "▶ Resume"}
+                    {resumingId === t.id ? "恢复中…" : "▶ 恢复"}
                   </button>
                 </div>
               </div>
@@ -226,12 +225,12 @@ export function PausedTasksPage() {
                 )}
                 {t.scope !== "live" && (
                   <span className="pill-stat" style={{ color: "var(--success)" }}>
-                    📦 {(t.processed ?? 0).toLocaleString()} copied
+                    📦 已复制 {(t.processed ?? 0).toLocaleString()}
                   </span>
                 )}
                 {t.scope !== "backfill_only" && (
                   <span className="pill-stat" style={{ color: "var(--info)" }}>
-                    ⚡ {(t.live_processed ?? 0).toLocaleString()} live
+                    ⚡ 实时 {(t.live_processed ?? 0).toLocaleString()}
                   </span>
                 )}
                 <span>·</span>

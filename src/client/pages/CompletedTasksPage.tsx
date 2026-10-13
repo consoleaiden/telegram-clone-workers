@@ -5,10 +5,10 @@ import { Badge, type BadgeVariant } from "../components/Badge";
 import type { TaskSummary } from "../../shared/rpcTypes";
 
 function completedStatus(task: TaskSummary): { variant: BadgeVariant; label: string } {
-  if (task.stop_reason) return { variant: "failed", label: "Stopped" };
-  if (task.backfill_status === "failed") return { variant: "failed", label: "Failed" };
-  if (task.backfill_status === "complete") return { variant: "complete", label: "Complete" };
-  return { variant: "idle", label: "Cancelled" };
+  if (task.stop_reason) return { variant: "failed", label: "已停止" };
+  if (task.backfill_status === "failed") return { variant: "failed", label: "失败" };
+  if (task.backfill_status === "complete") return { variant: "complete", label: "已完成" };
+  return { variant: "idle", label: "已取消" };
 }
 
 export function CompletedTasksPage() {
@@ -21,29 +21,29 @@ export function CompletedTasksPage() {
   return (
     <div className="content-container">
       <PageHero
-        title="Completed Tasks"
-        subtitle="Finished, cancelled, or stopped task history"
+        title="已完成任务"
+        subtitle="已完成、已取消或已停止的任务历史"
       >
         <button className="btn btn-primary" onClick={() => navigate("wizard")}>
-          + New Task
+          + 新建任务
         </button>
       </PageHero>
 
       {/* Metrics */}
       <div className="metric-grid">
         <div className="metric-card">
-          <div className="metric-title">Completed Tasks</div>
+          <div className="metric-title">已完成任务</div>
           <div className="metric-val">{completed.length}</div>
         </div>
         <div className="metric-card">
-          <div className="metric-title">Total Messages Copied</div>
+          <div className="metric-title">已复制消息总数</div>
           <div className="metric-val">{totalProcessed.toLocaleString()}</div>
         </div>
       </div>
 
       <div className="card">
         <div className="card-header">
-          <div className="card-title">Task History Log</div>
+          <div className="card-title">任务历史记录</div>
         </div>
 
         {loading && completed.length === 0 && (
@@ -55,7 +55,7 @@ export function CompletedTasksPage() {
 
         {!loading && completed.length === 0 && (
           <p className="text-muted" style={{ fontSize: 13, textAlign: "center", padding: "24px 0" }}>
-            No completed tasks yet — finished, cancelled, or stopped tasks will appear here.
+            暂无已完成任务——已完成、已取消或已停止的任务将显示在这里。
           </p>
         )}
 
@@ -81,12 +81,12 @@ export function CompletedTasksPage() {
                 )}
                 {task.scope !== "live" && (
                   <span className="pill-stat" style={{ color: "var(--success)" }}>
-                    📦 {(task.processed ?? 0).toLocaleString()} copied
+                    📦 已复制 {(task.processed ?? 0).toLocaleString()}
                   </span>
                 )}
                 {task.scope !== "backfill_only" && (
                   <span className="pill-stat" style={{ color: "var(--info)" }}>
-                    ⚡ {(task.live_processed ?? 0).toLocaleString()} live
+                    ⚡ 实时 {(task.live_processed ?? 0).toLocaleString()}
                   </span>
                 )}
                 <span>·</span>

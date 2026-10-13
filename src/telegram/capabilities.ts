@@ -13,33 +13,33 @@ export function deriveCapabilities(botMember: TelegramChatMember, chatType: stri
   return [
     {
       key: "invite_link",
-      label: "Generate invite link",
+      label: "生成邀请链接",
       available: has("can_invite_users"),
-      reason: has("can_invite_users") ? undefined : "bot lacks the 'Add Users' admin right in this chat",
+      reason: has("can_invite_users") ? undefined : "机器人在此聊天中缺少「添加用户」管理员权限",
     },
     {
       key: "ban",
-      label: "Ban / unban user",
+      label: "封禁 / 解除封禁用户",
       available: has("can_restrict_members"),
-      reason: has("can_restrict_members") ? undefined : "bot lacks the 'Restrict Members' admin right in this chat",
+      reason: has("can_restrict_members") ? undefined : "机器人在此聊天中缺少「限制成员」管理员权限",
     },
     {
       key: "promote",
-      label: "Promote member",
+      label: "提升成员",
       available: has("can_promote_members"),
-      reason: has("can_promote_members") ? undefined : "bot lacks the 'Add New Admins' admin right in this chat",
+      reason: has("can_promote_members") ? undefined : "机器人在此聊天中缺少「添加新管理员」管理员权限",
     },
     {
       key: "send_message",
-      label: "Send message",
+      label: "发送消息",
       available: canSend,
-      reason: canSend ? undefined : "bot cannot post in this chat (not a member with send rights)",
+      reason: canSend ? undefined : "机器人无法在此聊天中发送消息（不是具有发送权限的成员）",
     },
     {
       key: "delete_message",
-      label: "Delete message (used by the 'last N' probe)",
+      label: "删除消息（用于「最近 N 条」探测）",
       available: has("can_delete_messages"),
-      reason: has("can_delete_messages") ? undefined : "bot lacks the 'Delete Messages' admin right in this chat",
+      reason: has("can_delete_messages") ? undefined : "机器人在此聊天中缺少「删除消息」管理员权限",
     },
   ];
 }

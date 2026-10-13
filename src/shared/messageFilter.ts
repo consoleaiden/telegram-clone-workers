@@ -95,19 +95,19 @@ export function formatBytes(bytes?: number): string {
 export function getMediaIcon(type: string): string {
   switch (type) {
     case "video":
-      return "🎬 Video";
+      return "🎬 视频";
     case "document":
-      return "📄 Document";
+      return "📄 文档";
     case "photo":
-      return "🖼️ Photo";
+      return "🖼️ 图片";
     case "audio":
-      return "🎵 Audio";
+      return "🎵 音频";
     case "voice":
-      return "🎙️ Voice";
+      return "🎙️ 语音";
     case "animation":
       return "🎭 GIF";
     default:
-      return "💬 Text";
+      return "💬 文本";
   }
 }
 
@@ -129,7 +129,7 @@ export function evaluateMessageFilter(
         detectedType: type,
         detectedSize: size,
         detectedName: name,
-        reason: type === "text" ? "text-only not allowed" : `${type}s filtered out`,
+        reason: type === "text" ? "不允许纯文本" : `已过滤掉${type}类型`,
       };
     }
   }
@@ -142,7 +142,7 @@ export function evaluateMessageFilter(
         detectedType: type,
         detectedSize: size,
         detectedName: name,
-        reason: `below min size ${formatBytes(criteria.minSizeBytes)}`,
+        reason: `小于最小大小 ${formatBytes(criteria.minSizeBytes)}`,
       };
     }
   }
@@ -155,7 +155,7 @@ export function evaluateMessageFilter(
         detectedType: type,
         detectedSize: size,
         detectedName: name,
-        reason: `above max size ${formatBytes(criteria.maxSizeBytes)}`,
+        reason: `超过最大大小 ${formatBytes(criteria.maxSizeBytes)}`,
       };
     }
   }

@@ -29,11 +29,11 @@ export function ProgressBar({
         }}
       >
         <span>
-          {scanned.toLocaleString()} / {t.toLocaleString()} IDs scanned · {pct}%
+          已扫描 {scanned.toLocaleString()} / {t.toLocaleString()} 个 ID · {pct}%
         </span>
         {f > 0 && (
           <span>
-            ({p.toLocaleString()} copied, {f.toLocaleString()} skipped)
+            （已复制 {p.toLocaleString()}，已跳过 {f.toLocaleString()}）
           </span>
         )}
       </div>

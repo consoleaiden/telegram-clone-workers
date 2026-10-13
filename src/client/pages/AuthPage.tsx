@@ -22,11 +22,11 @@ export function AuthPage({ mode: forceMode, onCancel }: AuthPageProps) {
 
     if (isSetup) {
       if (!password || password.length < 4) {
-        setError("Password must be at least 4 characters long");
+        setError("密码长度至少为 4 个字符");
         return;
       }
       if (password !== confirmPassword) {
-        setError("Passwords do not match");
+        setError("两次输入的密码不一致");
         return;
       }
 
@@ -34,13 +34,13 @@ export function AuthPage({ mode: forceMode, onCancel }: AuthPageProps) {
       const res = await setup(password);
       setSubmitting(false);
       if (!res.ok) {
-        setError(res.error || "Failed to save password");
+        setError(res.error || "保存密码失败");
       } else if (onCancel) {
         onCancel();
       }
     } else {
       if (!password) {
-        setError("Please enter your password");
+        setError("请输入密码");
         return;
       }
 
@@ -48,7 +48,7 @@ export function AuthPage({ mode: forceMode, onCancel }: AuthPageProps) {
       const res = await login(password);
       setSubmitting(false);
       if (!res.ok) {
-        setError(res.error || "Incorrect admin password");
+        setError(res.error || "管理员密码不正确");
       } else if (onCancel) {
         onCancel();
       }
@@ -66,23 +66,23 @@ export function AuthPage({ mode: forceMode, onCancel }: AuthPageProps) {
             </svg>
           </div>
           <h1 id="auth-title" className="auth-title">
-            {isSetup ? "Protect Your Console" : "Admin Sign In"}
+            {isSetup ? "保护你的控制台" : "管理员登录"}
           </h1>
           <p className="auth-subtitle">
             {isSetup
-              ? "Set a master password to restrict access to this Cloudflare Worker, or proceed with open access."
-              : "Enter your master password to access the Telegram Clone Worker console."}
+              ? "设置一个主密码以限制对此 Cloudflare Worker 的访问，或以开放访问模式继续。"
+              : "输入主密码以访问 Telegram Clone Worker 控制台。"}
           </p>
 
           {source === "env" && (
-            <div className="auth-env-badge" title="Configured in Cloudflare Dashboard or Wrangler">
+            <div className="auth-env-badge" title="已在 Cloudflare 控制台或 Wrangler 中配置">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <rect x="2" y="2" width="20" height="8" rx="2" ry="2" />
                 <rect x="2" y="14" width="20" height="8" rx="2" ry="2" />
                 <line x1="6" y1="6" x2="6.01" y2="6" />
                 <line x1="6" y1="18" x2="6.01" y2="18" />
               </svg>
-              <span>Enforced via ADMIN_PASSWORD</span>
+              <span>通过 ADMIN_PASSWORD 强制启用</span>
             </div>
           )}
         </div>
@@ -101,14 +101,14 @@ export function AuthPage({ mode: forceMode, onCancel }: AuthPageProps) {
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="field">
             <label className="form-label" htmlFor="auth-password">
-              {isSetup ? "New Master Password" : "Admin Password"}
+              {isSetup ? "新的主密码" : "管理员密码"}
             </label>
             <div className="auth-input-wrapper">
               <input
                 id="auth-password"
                 type={showPassword ? "text" : "password"}
                 className="input auth-input"
-                placeholder={isSetup ? "Enter at least 4 characters" : "Enter password"}
+                placeholder={isSetup ? "至少输入 4 个字符" : "请输入密码"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 autoFocus
@@ -120,8 +120,8 @@ export function AuthPage({ mode: forceMode, onCancel }: AuthPageProps) {
                 className="auth-password-toggle"
                 onClick={() => setShowPassword((s) => !s)}
                 tabIndex={-1}
-                title={showPassword ? "Hide password" : "Show password"}
-                aria-label={showPassword ? "Hide password" : "Show password"}
+                title={showPassword ? "隐藏密码" : "显示密码"}
+                aria-label={showPassword ? "隐藏密码" : "显示密码"}
               >
                 {showPassword ? (
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -141,13 +141,13 @@ export function AuthPage({ mode: forceMode, onCancel }: AuthPageProps) {
           {isSetup && (
             <div className="field">
               <label className="form-label" htmlFor="auth-confirm-password">
-                Confirm Master Password
+                确认主密码
               </label>
               <input
                 id="auth-confirm-password"
                 type={showPassword ? "text" : "password"}
                 className="input auth-input"
-                placeholder="Re-enter master password"
+                placeholder="再次输入主密码"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 disabled={submitting}
@@ -163,11 +163,11 @@ export function AuthPage({ mode: forceMode, onCancel }: AuthPageProps) {
               disabled={submitting}
             >
               {submitting ? (
-                <span>Verifying...</span>
+                <span>验证中…</span>
               ) : isSetup ? (
-                <span>Save Password & Enter</span>
+                <span>保存密码并进入</span>
               ) : (
-                <span>Unlock Console</span>
+                <span>解锁控制台</span>
               )}
             </button>
 
@@ -178,7 +178,7 @@ export function AuthPage({ mode: forceMode, onCancel }: AuthPageProps) {
                 onClick={onCancel ? onCancel : skipSetup}
                 disabled={submitting}
               >
-                {onCancel ? "Cancel" : "Skip for now — Proceed without password"}
+                {onCancel ? "取消" : "暂时跳过——不设置密码直接进入"}
               </button>
             )}
           </div>
@@ -186,7 +186,7 @@ export function AuthPage({ mode: forceMode, onCancel }: AuthPageProps) {
 
         {isSetup && !onCancel && (
           <p className="auth-footnote">
-            Tip: You can always set or change your password later directly in the console navigation or via the Cloudflare Dashboard.
+            提示：你随时可以在控制台导航中，或通过 Cloudflare 控制台设置或修改密码。
           </p>
         )}
       </div>

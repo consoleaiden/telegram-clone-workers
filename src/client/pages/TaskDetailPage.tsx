@@ -76,23 +76,23 @@ export function TaskDetailPage({ taskId }: { taskId: string }) {
 
     if (wantsBackfill) {
       if (!editStartId || !editEndId) {
-        toast.show("error", "Start ID and End ID are required for backfill");
+        toast.show("error", "回填需要填写起始 ID 和结束 ID");
         return;
       }
       startId = Number(editStartId);
       endId = Number(editEndId);
       if (isNaN(startId) || isNaN(endId)) {
-        toast.show("error", "Start ID and End ID must be valid numbers");
+        toast.show("error", "起始 ID 和结束 ID 必须是有效数字");
         return;
       }
       if (startId > endId) {
-        toast.show("error", "Start ID cannot be greater than End ID");
+        toast.show("error", "起始 ID 不能大于结束 ID");
         return;
       }
       if (editCursor && !resetProgress) {
         cursor = Number(editCursor);
         if (isNaN(cursor)) {
-          toast.show("error", "Cursor must be a valid number");
+          toast.show("error", "游标必须是有效数字");
           return;
         }
       }
@@ -117,7 +117,7 @@ export function TaskDetailPage({ taskId }: { taskId: string }) {
     setSavingEdit(false);
 
     if (res.ok) {
-      toast.show("success", "Task updated successfully");
+      toast.show("success", "任务更新成功");
       setIsEditing(false);
       refetch();
       refetchGlobalTasks();
@@ -138,12 +138,12 @@ export function TaskDetailPage({ taskId }: { taskId: string }) {
     return (
       <div className="content-container">
         <div className="card" style={{ textAlign: "center", padding: "40px 20px" }}>
-          <h3 style={{ fontSize: 16, marginBottom: 8 }}>Task Not Found</h3>
+          <h3 style={{ fontSize: 16, marginBottom: 8 }}>未找到任务</h3>
           <p className="text-muted" style={{ marginBottom: 20 }}>
-            This task could not be loaded or may have been deleted.
+            无法加载此任务，或该任务已被删除。
           </p>
           <button className="btn btn-primary" onClick={() => navigate("")}>
-            ← Back to Tasks
+            ← 返回任务列表
           </button>
         </div>
       </div>
@@ -179,8 +179,8 @@ export function TaskDetailPage({ taskId }: { taskId: string }) {
     setTestingCopy(false);
     setTestCopyResult(
       res.ok
-        ? `✓ Sent as message #${res.data.message_id} in destination`
-        : `✗ Failed: ${res.description}`,
+        ? `✓ 已在目标聊天中作为消息 #${res.data.message_id} 发送`
+        : `✗ 失败：${res.description}`,
     );
   }
 
@@ -189,10 +189,10 @@ export function TaskDetailPage({ taskId }: { taskId: string }) {
 
   async function removeTask() {
     if (!task) return;
-    if (!confirm(`Delete task "${displayTitle}"? This can't be undone.`)) return;
+    if (!confirm(`删除任务「${displayTitle}」？此操作无法撤销。`)) return;
     const res = await api.del(`/api/tasks/${taskId}`);
     if (res.ok) {
-      toast.show("success", "Task deleted");
+      toast.show("success", "任务已删除");
       refetchGlobalTasks();
       navigate("");
     } else {
@@ -207,58 +207,58 @@ export function TaskDetailPage({ taskId }: { taskId: string }) {
           <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
             <span>{displayTitle}</span>
             {task.stop_reason ? (
-              <Badge variant="failed" label="Stopped" />
+              <Badge variant="failed" label="已停止" />
             ) : task.scope === "live_and_backfill" ? (
               <>
-                {task.backfill_status === "running" && <Badge variant="running" label="Backfilling" />}
-                {task.backfill_status === "complete" && <Badge variant="complete" label="Backfill Complete" />}
+                {task.backfill_status === "running" && <Badge variant="running" label="回填中" />}
+                {task.backfill_status === "complete" && <Badge variant="complete" label="回填完成" />}
                 {task.live_enabled ? (
-                  <Badge variant="live" label="Live Forward" />
+                  <Badge variant="live" label="实时转发" />
                 ) : (
-                  <Badge variant="paused" label="Live Paused" />
+                  <Badge variant="paused" label="实时已暂停" />
                 )}
-                {task.backfill_status === "paused" && <Badge variant="paused" label="Backfill Paused" />}
+                {task.backfill_status === "paused" && <Badge variant="paused" label="回填已暂停" />}
               </>
             ) : task.live_enabled ? (
-              <Badge variant="live" label="Live Forward" />
+              <Badge variant="live" label="实时转发" />
             ) : task.backfill_status === "running" ? (
-              <Badge variant="running" label="Backfilling" />
+              <Badge variant="running" label="回填中" />
             ) : task.backfill_status === "paused" ? (
-              <Badge variant="paused" label="Paused" />
+              <Badge variant="paused" label="已暂停" />
             ) : task.backfill_status === "complete" ? (
-              <Badge variant="complete" label="Complete" />
+              <Badge variant="complete" label="已完成" />
             ) : task.backfill_status === "cancelled" ? (
-              <Badge variant="idle" label="Cancelled" />
+              <Badge variant="idle" label="已取消" />
             ) : !task.live_enabled && task.scope === "live" ? (
-              <Badge variant="paused" label="Live Paused" />
+              <Badge variant="paused" label="实时已暂停" />
             ) : (
-              <Badge variant="idle" label={task.backfill_status ?? "Idle"} />
+              <Badge variant="idle" label={task.backfill_status ?? "空闲"} />
             )}
           </div>
         }
-        subtitle={`Scope: ${task.scope.replace(/_/g, " ")} · Created ${new Date(task.created_at * 1000).toLocaleString()}`}
+        subtitle={`范围：${task.scope.replace(/_/g, " ")} · 创建于 ${new Date(task.created_at * 1000).toLocaleString()}`}
       >
         <button className="btn btn-secondary btn-sm" onClick={() => navigate("")}>
-          ← Back to Tasks
+          ← 返回任务列表
         </button>
         {task.backfill_status === "running" && (
           <button className="btn btn-secondary btn-sm" onClick={() => patch({ backfillStatus: "paused" })}>
-            Pause Backfill
+            暂停回填
           </button>
         )}
         {task.backfill_status === "paused" && (
           <button className="btn btn-primary btn-sm" onClick={() => patch({ backfillStatus: "running" })}>
-            Resume Backfill
+            恢复回填
           </button>
         )}
         {task.scope === "live" && task.live_enabled && (
           <button className="btn btn-secondary btn-sm" onClick={() => patch({ liveEnabled: false })}>
-            Pause Live
+            暂停实时
           </button>
         )}
         {task.scope === "live" && !task.live_enabled && (
           <button className="btn btn-primary btn-sm" onClick={() => patch({ liveEnabled: true })}>
-            Resume Live
+            恢复实时
           </button>
         )}
         {task.scope === "live_and_backfill" && !task.live_enabled && task.backfill_status === "paused" && (
@@ -266,14 +266,14 @@ export function TaskDetailPage({ taskId }: { taskId: string }) {
             className="btn btn-primary btn-sm"
             onClick={() => patch({ liveEnabled: true, backfillStatus: "running" })}
           >
-            Resume All
+            全部恢复
           </button>
         )}
         <button className="btn btn-secondary btn-sm" onClick={openEditModal}>
-          ✏️ Edit Task
+          ✏️ 编辑任务
         </button>
         <button className="btn btn-danger btn-sm" onClick={removeTask}>
-          Delete
+          删除
         </button>
       </PageHero>
 
@@ -281,9 +281,9 @@ export function TaskDetailPage({ taskId }: { taskId: string }) {
         <div className="card">
           <PermissionErrorBanner
             reason={task.stop_reason}
-            description={`Telegram rejected requests from this bot as of ${
-              task.stopped_at ? new Date(task.stopped_at * 1000).toLocaleString() : "an unknown time"
-            }.`}
+            description={`自 ${
+              task.stopped_at ? new Date(task.stopped_at * 1000).toLocaleString() : "未知时间"
+            } 起，Telegram 拒绝了该机器人的请求。`}
           />
         </div>
       )}
@@ -291,7 +291,7 @@ export function TaskDetailPage({ taskId }: { taskId: string }) {
       {/* Pipeline Execution Card (Zero Duplication) */}
       <div className="card">
         <div className="card-header">
-          <div className="card-title">Pipeline Execution</div>
+          <div className="card-title">流水线执行</div>
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: task.scope === "backfill_only" || task.scope === "live" ? "1fr" : "repeat(auto-fit, minmax(300px, 1fr))", gap: 16 }}>
@@ -299,9 +299,9 @@ export function TaskDetailPage({ taskId }: { taskId: string }) {
           {task.scope !== "live" && (
             <div style={{ background: "var(--surface-raised)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius)", padding: 16 }}>
               <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 12, color: "var(--success)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span>📦 Historical Backfill</span>
+                <span>📦 历史回填</span>
                 <span className={`badge ${isBackfillComplete ? "badge-success" : task.backfill_status === "running" ? "badge-accent" : "badge-muted"}`} style={{ fontSize: 10, padding: "1px 6px" }}>
-                  {isBackfillComplete ? "100% Complete" : task.backfill_status === "running" ? "Running" : "Paused"}
+                  {isBackfillComplete ? "100% 完成" : task.backfill_status === "running" ? "运行中" : "已暂停"}
                 </span>
               </div>
 
@@ -309,10 +309,10 @@ export function TaskDetailPage({ taskId }: { taskId: string }) {
               <div style={{ marginBottom: 12 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, fontWeight: 600, marginBottom: 4 }}>
                   <span style={{ color: isBackfillComplete ? "var(--success)" : "var(--accent)" }}>
-                    {isBackfillComplete ? "✓ Range Scanned" : `${rangeScannedPct}% Range Scanned`}
+                    {isBackfillComplete ? "✓ 范围已扫描" : `范围已扫描 ${rangeScannedPct}%`}
                   </span>
                   <span className="text-muted" style={{ fontFamily: "var(--font-mono)" }}>
-                    {scannedCount.toLocaleString()} / {(task.total ?? 0).toLocaleString()} IDs
+                    {scannedCount.toLocaleString()} / {(task.total ?? 0).toLocaleString()} 个 ID
                   </span>
                 </div>
                 <div style={{ height: 6, background: "var(--surface-hover)", borderRadius: "var(--radius-full)", overflow: "hidden" }}>
@@ -330,14 +330,14 @@ export function TaskDetailPage({ taskId }: { taskId: string }) {
               </div>
 
               <div style={{ fontSize: 12.5, color: "var(--muted)", lineHeight: 1.8 }}>
-                <div>Range: <strong style={{ color: "var(--ink)" }}>IDs {(task.start_id ?? 1).toLocaleString()} to {(task.end_id ?? 0).toLocaleString()}</strong> {task.cursor != null ? `(cursor at #${task.cursor.toLocaleString()})` : ""}</div>
-                <div>Messages Copied: <strong style={{ color: "var(--ink)" }}>{(task.processed ?? 0).toLocaleString()}</strong></div>
+                <div>范围：<strong style={{ color: "var(--ink)" }}>ID {(task.start_id ?? 1).toLocaleString()} 至 {(task.end_id ?? 0).toLocaleString()}</strong> {task.cursor != null ? `（游标位于 #${task.cursor.toLocaleString()}）` : ""}</div>
+                <div>已复制消息：<strong style={{ color: "var(--ink)" }}>{(task.processed ?? 0).toLocaleString()}</strong></div>
                 {task.failed > 0 && (
                   <div style={{ fontSize: 11.5, color: "var(--text-dim)" }}>
-                    ({task.failed.toLocaleString()} empty or deleted message IDs skipped)
+                    （已跳过 {task.failed.toLocaleString()} 个空或已删除的消息 ID）
                   </div>
                 )}
-                <div>Pacing: <strong style={{ color: "var(--ink)" }}>~{task.pacing_batch_size ?? 60} msgs/batch</strong></div>
+                <div>节奏：<strong style={{ color: "var(--ink)" }}>每批约 {task.pacing_batch_size ?? 60} 条消息</strong></div>
               </div>
             </div>
           )}
@@ -346,29 +346,29 @@ export function TaskDetailPage({ taskId }: { taskId: string }) {
           {task.scope !== "backfill_only" && (
             <div style={{ background: "var(--surface-raised)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius)", padding: 16 }}>
               <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 12, color: "var(--info)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span>⚡ Live Auto-Sync</span>
+                <span>⚡ 实时自动同步</span>
                 <span className={`badge ${task.live_enabled ? "badge-accent" : "badge-muted"}`} style={{ fontSize: 10, padding: "1px 6px" }}>
-                  {task.live_enabled ? "Active (1m poll)" : "Paused"}
+                  {task.live_enabled ? "已启用（每 1 分钟轮询）" : "已暂停"}
                 </span>
               </div>
 
               <div style={{ fontSize: 12.5, color: "var(--muted)", lineHeight: 1.8 }}>
-                <div>Forwarded: <strong style={{ color: "var(--ink)" }}>{(task.live_processed ?? 0).toLocaleString()} messages</strong></div>
+                <div>已转发：<strong style={{ color: "var(--ink)" }}>{(task.live_processed ?? 0).toLocaleString()} 条消息</strong></div>
                 {task.live_skipped ? (
-                  <div>Filtered Out: <strong style={{ color: "var(--warning)" }}>{task.live_skipped.toLocaleString()} messages</strong></div>
+                  <div>已过滤：<strong style={{ color: "var(--warning)" }}>{task.live_skipped.toLocaleString()} 条消息</strong></div>
                 ) : null}
                 {task.pending_count && task.pending_count > 0 ? (
-                  <div>Live Buffer: <strong style={{ color: "var(--info)" }}>{task.pending_count.toLocaleString()} queued</strong> {task.backfill_status === "running" ? "(waiting for backfill to finish)" : ""}</div>
+                  <div>实时缓冲：<strong style={{ color: "var(--info)" }}>已排队 {task.pending_count.toLocaleString()} 条</strong> {task.backfill_status === "running" ? "（等待回填完成）" : ""}</div>
                 ) : null}
                 {task.filter_media_types || task.filter_min_size_bytes || task.filter_max_size_bytes ? (
                   <div style={{ marginTop: 6, fontSize: 11.5, color: "var(--ink)", borderTop: "1px solid var(--border-subtle)", paddingTop: 8 }}>
-                    Filters: <strong>{task.filter_media_types ? task.filter_media_types.split(",").map((m) => getMediaIcon(m.trim())).join(", ") : "All media"}</strong>
+                    过滤器：<strong>{task.filter_media_types ? task.filter_media_types.split(",").map((m) => getMediaIcon(m.trim())).join(", ") : "所有媒体"}</strong>
                     {task.filter_min_size_bytes ? ` (≥ ${formatBytes(task.filter_min_size_bytes)})` : ""}
                     {task.filter_max_size_bytes ? ` (≤ ${formatBytes(task.filter_max_size_bytes)})` : ""}
                   </div>
                 ) : (
                   <div style={{ marginTop: 6, fontSize: 11.5, color: "var(--muted)", borderTop: "1px solid var(--border-subtle)", paddingTop: 8 }}>
-                    Filters: <em>None (forwarding all incoming messages)</em>
+                    过滤器：<em>无（转发所有收到的消息）</em>
                   </div>
                 )}
                 <div style={{ marginTop: 12 }}>
@@ -377,7 +377,7 @@ export function TaskDetailPage({ taskId }: { taskId: string }) {
                     disabled={!!task.stop_reason}
                     onClick={() => patch({ liveEnabled: !task.live_enabled })}
                   >
-                    {task.live_enabled ? "Pause Live" : "Resume Live"}
+                    {task.live_enabled ? "暂停实时" : "恢复实时"}
                   </button>
                 </div>
               </div>
@@ -389,25 +389,25 @@ export function TaskDetailPage({ taskId }: { taskId: string }) {
       {/* Task Specification Card */}
       <div className="card">
         <div className="card-header">
-          <div className="card-title">Task Specification</div>
+          <div className="card-title">任务规格</div>
         </div>
         <div className="task-spec-grid">
           <div className="task-spec-item">
-            <div className="task-spec-label">Connected Bot</div>
+            <div className="task-spec-label">已连接的机器人</div>
             <div className="task-spec-value">@{task.bot_username}</div>
           </div>
           <div className="task-spec-item">
-            <div className="task-spec-label">Source Chat</div>
-            <div className="task-spec-value">{task.source_chat_title || "Channel"}</div>
+            <div className="task-spec-label">源聊天</div>
+            <div className="task-spec-value">{task.source_chat_title || "频道"}</div>
             <div style={{ fontSize: 11, color: "var(--muted)", fontFamily: "var(--font-mono)", marginTop: 2 }}>{task.source_chat_id}</div>
           </div>
           <div className="task-spec-item">
-            <div className="task-spec-label">Destination Chat</div>
-            <div className="task-spec-value">{task.dest_chat_title || "Channel"}</div>
+            <div className="task-spec-label">目标聊天</div>
+            <div className="task-spec-value">{task.dest_chat_title || "频道"}</div>
             <div style={{ fontSize: 11, color: "var(--muted)", fontFamily: "var(--font-mono)", marginTop: 2 }}>{task.dest_chat_id}</div>
           </div>
           <div className="task-spec-item">
-            <div className="task-spec-label">Scope & Created</div>
+            <div className="task-spec-label">范围与创建时间</div>
             <div className="task-spec-value">{task.scope.replace(/_/g, " ")}</div>
             <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 2 }}>{new Date(task.created_at * 1000).toLocaleString()}</div>
           </div>
@@ -417,17 +417,22 @@ export function TaskDetailPage({ taskId }: { taskId: string }) {
       {/* Recent Activity & Diagnostic Hub */}
       <div className="card">
         <div className="card-header">
-          <div className="card-title">Recent Activity</div>
+          <div className="card-title">最近活动</div>
         </div>
         {!activity || activity.length === 0 ? (
           <p className="text-muted" style={{ fontSize: 13 }}>
-            No activity logged yet.
+            暂无活动记录。
           </p>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 8, fontFamily: "var(--font-mono)", fontSize: 12 }}>
             {activity.map((entry) => {
-              const isFiltered = entry.error?.startsWith("Filtered:") || entry.detail?.includes("skipped:");
-              const isBufferQueue = entry.detail?.includes("Queued in buffer");
+              const isFiltered =
+                entry.error?.startsWith("Filtered:") ||
+                entry.error?.startsWith("已过滤") ||
+                entry.detail?.includes("skipped:") ||
+                entry.detail?.includes("已跳过");
+              const isBufferQueue =
+                entry.detail?.includes("Queued in buffer") || entry.detail?.includes("已进入缓冲队列");
               return (
                 <div key={entry.id} style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                   <span style={{ color: entry.ok ? "var(--success)" : isFiltered ? "var(--warning)" : "var(--danger)" }}>
@@ -458,7 +463,7 @@ export function TaskDetailPage({ taskId }: { taskId: string }) {
                         : "var(--muted)",
                     }}
                   >
-                    {isFiltered ? "FILTERED" : isBufferQueue ? "QUEUED" : entry.kind === "live_forward" ? "LIVE" : "BACKFILL"}
+                    {isFiltered ? "已过滤" : isBufferQueue ? "已排队" : entry.kind === "live_forward" ? "实时" : "回填"}
                   </span>
                   <span>{entry.detail}</span>
                   {entry.error && !isFiltered && <span className="text-danger">— {entry.error}</span>}
@@ -470,17 +475,17 @@ export function TaskDetailPage({ taskId }: { taskId: string }) {
 
         {/* Diagnostic Tool: Send Test Message Copy */}
         <div className="activity-diagnostic-box">
-          <div className="activity-diagnostic-header">Diagnostic Tool — Send Test Message Copy</div>
+          <div className="activity-diagnostic-header">诊断工具 — 发送测试消息复制</div>
           <div className="row" style={{ marginTop: 8 }}>
             <input
               className="input"
               style={{ maxWidth: 220 }}
-              placeholder="Message ID (optional)"
+              placeholder="消息 ID（可选）"
               value={testMessageId}
               onChange={(e) => setTestMessageId(e.target.value)}
             />
             <button className="btn btn-secondary btn-sm" disabled={testingCopy} onClick={runTestCopy}>
-              {testingCopy ? "Sending…" : "Send Test Copy"}
+              {testingCopy ? "发送中…" : "发送测试复制"}
             </button>
           </div>
           {testCopyResult && (
@@ -497,13 +502,13 @@ export function TaskDetailPage({ taskId }: { taskId: string }) {
           <div className="modal-dialog" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <div className="modal-title">
-                <span>✏️ Edit Task Configuration</span>
+                <span>✏️ 编辑任务配置</span>
               </div>
               <button
                 className="modal-close"
                 disabled={savingEdit}
                 onClick={() => setIsEditing(false)}
-                title="Close"
+                title="关闭"
               >
                 ✕
               </button>
@@ -512,26 +517,26 @@ export function TaskDetailPage({ taskId }: { taskId: string }) {
             <div className="modal-body">
               {/* Task Label */}
               <div className="field">
-                <label>Task Label</label>
+                <label>任务标签</label>
                 <input
                   className="input"
                   value={editLabel}
                   onChange={(e) => setEditLabel(e.target.value)}
-                  placeholder={displayInfo?.routeText || "Task Name / Label"}
+                  placeholder={displayInfo?.routeText || "任务名称 / 标签"}
                 />
               </div>
 
               {/* Scope Selector */}
               <div className="field">
-                <label>Copy Scope</label>
+                <label>复制范围</label>
                 <select
                   className="input"
                   value={editScope}
                   onChange={(e) => setEditScope(e.target.value as TaskScope)}
                 >
-                  <option value="live">New messages only (Live forward)</option>
-                  <option value="live_and_backfill">✨ Existing + New (Catch-Up Stream)</option>
-                  <option value="backfill_only">Existing only (One-time history backfill)</option>
+                  <option value="live">仅新消息（实时转发）</option>
+                  <option value="live_and_backfill">✨ 历史 + 新消息（追赶流）</option>
+                  <option value="backfill_only">仅历史消息（一次性历史回填）</option>
                 </select>
               </div>
 
@@ -546,33 +551,33 @@ export function TaskDetailPage({ taskId }: { taskId: string }) {
                   }}
                 >
                   <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 10, color: "var(--ink)" }}>
-                    📦 Backfill Range Configuration
+                    📦 回填范围配置
                   </div>
                   <div className="row" style={{ marginBottom: 10 }}>
                     <div className="field" style={{ margin: 0, flex: 1 }}>
-                      <label style={{ fontSize: 11 }}>Start ID</label>
+                      <label style={{ fontSize: 11 }}>起始 ID</label>
                       <input
                         className="input"
                         type="number"
                         min="1"
                         value={editStartId}
                         onChange={(e) => setEditStartId(e.target.value)}
-                        placeholder="Start ID"
+                        placeholder="起始 ID"
                       />
                     </div>
                     <div className="field" style={{ margin: 0, flex: 1 }}>
-                      <label style={{ fontSize: 11 }}>End ID</label>
+                      <label style={{ fontSize: 11 }}>结束 ID</label>
                       <input
                         className="input"
                         type="number"
                         min="1"
                         value={editEndId}
                         onChange={(e) => setEditEndId(e.target.value)}
-                        placeholder="End ID"
+                        placeholder="结束 ID"
                       />
                     </div>
                     <div className="field" style={{ margin: 0, flex: 1 }}>
-                      <label style={{ fontSize: 11 }}>Current Cursor</label>
+                      <label style={{ fontSize: 11 }}>当前游标</label>
                       <input
                         className="input"
                         type="number"
@@ -580,7 +585,7 @@ export function TaskDetailPage({ taskId }: { taskId: string }) {
                         disabled={resetProgress}
                         value={resetProgress ? editStartId : editCursor}
                         onChange={(e) => setEditCursor(e.target.value)}
-                        placeholder="Cursor"
+                        placeholder="游标"
                       />
                     </div>
                   </div>
@@ -591,11 +596,11 @@ export function TaskDetailPage({ taskId }: { taskId: string }) {
                       checked={resetProgress}
                       onChange={(e) => setResetProgress(e.target.checked)}
                     />
-                    <span>Reset progress counters (0 copied / 0 failed) and restart from Start ID</span>
+                    <span>重置进度计数（0 已复制 / 0 已失败）并从起始 ID 重新开始</span>
                   </label>
 
                   <p className="text-muted" style={{ fontSize: 11.5, marginTop: 8 }}>
-                    ⚡ Bulk backfill pace: 60 messages/minute without filters to preserve complete chat history.
+                    ⚡ 批量回填节奏：每分钟 60 条消息，且不使用过滤器，以保留完整的聊天历史。
                   </p>
                 </div>
               )}
@@ -612,7 +617,7 @@ export function TaskDetailPage({ taskId }: { taskId: string }) {
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
                     <div style={{ fontWeight: 700, fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
-                      <span>🔍 {editScope === "live" ? "Live Message Filters" : "Live Stream Filters (Stage 2)"}</span>
+                      <span>🔍 {editScope === "live" ? "实时消息过滤器" : "实时流过滤器（阶段 2）"}</span>
                     </div>
                     <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, cursor: "pointer", fontWeight: 600 }}>
                       <input
@@ -620,7 +625,7 @@ export function TaskDetailPage({ taskId }: { taskId: string }) {
                         checked={enableFilters}
                         onChange={(e) => setEnableFilters(e.target.checked)}
                       />
-                      Enable Filters
+                      启用过滤器
                     </label>
                   </div>
 
@@ -637,8 +642,8 @@ export function TaskDetailPage({ taskId }: { taskId: string }) {
                         marginBottom: 10,
                       }}
                     >
-                      • <strong>Backfill</strong> copies full history at 60 msgs/min unfiltered.<br />
-                      • <strong>Live stream</strong> applies the filters below once backfill completes (buffering matching messages until then).
+                      • <strong>回填</strong>：以每分钟 60 条消息、无过滤的方式复制完整历史。<br />
+                      • <strong>实时流</strong>：回填完成后应用下方过滤器（在此之前会缓冲匹配的消息）。
                     </div>
                   )}
 
@@ -646,14 +651,14 @@ export function TaskDetailPage({ taskId }: { taskId: string }) {
                     <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 10 }}>
                       <div>
                         <label style={{ fontSize: 11.5, fontWeight: 600, color: "var(--ink)", display: "block", marginBottom: 4 }}>
-                          Allowed Media Types (Leave unchecked for all media)
+                          允许的媒体类型（全部不勾选表示所有媒体）
                         </label>
                         <div style={{ display: "flex", gap: 12, flexWrap: "wrap", fontSize: 12 }}>
                           {[
-                            { id: "document", label: "📄 Documents" },
-                            { id: "video", label: "🎬 Videos" },
-                            { id: "photo", label: "🖼️ Photos" },
-                            { id: "audio", label: "🎵 Audio" },
+                            { id: "document", label: "📄 文档" },
+                            { id: "video", label: "🎬 视频" },
+                            { id: "photo", label: "🖼️ 图片" },
+                            { id: "audio", label: "🎵 音频" },
                           ].map((mt) => (
                             <label key={mt.id} style={{ display: "flex", alignItems: "center", gap: 5, cursor: "pointer" }}>
                               <input
@@ -675,25 +680,25 @@ export function TaskDetailPage({ taskId }: { taskId: string }) {
 
                       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 10 }}>
                         <div className="field" style={{ margin: 0 }}>
-                          <label style={{ fontSize: 11 }}>Min File Size (MB)</label>
+                          <label style={{ fontSize: 11 }}>最小文件大小（MB）</label>
                           <input
                             className="input"
                             type="number"
                             min="0"
                             step="1"
-                            placeholder="e.g. 10 (ignore < 10 MB)"
+                            placeholder="例如 10（忽略小于 10 MB 的文件）"
                             value={minFileSizeMb}
                             onChange={(e) => setMinFileSizeMb(e.target.value)}
                           />
                         </div>
                         <div className="field" style={{ margin: 0 }}>
-                          <label style={{ fontSize: 11 }}>Max File Size (MB, optional)</label>
+                          <label style={{ fontSize: 11 }}>最大文件大小（MB，可选）</label>
                           <input
                             className="input"
                             type="number"
                             min="0"
                             step="1"
-                            placeholder="e.g. 500 (ignore > 500 MB)"
+                            placeholder="例如 500（忽略大于 500 MB 的文件）"
                             value={maxFileSizeMb}
                             onChange={(e) => setMaxFileSizeMb(e.target.value)}
                           />
@@ -711,14 +716,14 @@ export function TaskDetailPage({ taskId }: { taskId: string }) {
                 disabled={savingEdit}
                 onClick={() => setIsEditing(false)}
               >
-                Cancel
+                取消
               </button>
               <button
                 className="btn btn-primary btn-sm"
                 disabled={savingEdit}
                 onClick={handleSaveEdit}
               >
-                {savingEdit ? "Saving…" : "Save Changes"}
+                {savingEdit ? "保存中…" : "保存更改"}
               </button>
             </div>
           </div>

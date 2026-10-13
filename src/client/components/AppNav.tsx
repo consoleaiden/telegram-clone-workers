@@ -153,7 +153,7 @@ function CommandPalette({ open, onClose }: { open: boolean; onClose: () => void 
           <input
             className="input"
             style={{ flex: 1 }}
-            placeholder="Jump to a task or bot…"
+            placeholder="跳转到任务或机器人…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             autoFocus
@@ -161,10 +161,10 @@ function CommandPalette({ open, onClose }: { open: boolean; onClose: () => void 
         </div>
         <div style={{ maxHeight: 260, overflowY: "auto" }}>
           {bots === null || tasks === null ? (
-            <div className="text-muted" style={{ padding: 12, textAlign: "center" }}>Loading…</div>
+            <div className="text-muted" style={{ padding: 12, textAlign: "center" }}>加载中…</div>
           ) : nothingFound ? (
             <div className="text-muted" style={{ padding: 12, textAlign: "center" }}>
-              {q ? `No matches for "${query}"` : "No tasks or bots found."}
+              {q ? `没有匹配「${query}」的结果` : "未找到任务或机器人。"}
             </div>
           ) : (
             <>
@@ -183,7 +183,7 @@ function CommandPalette({ open, onClose }: { open: boolean; onClose: () => void 
                     <span>{getTaskDisplayInfo(t).title}</span>
                   </div>
                   <span className={`badge-count ${t.live_enabled ? "live" : ""}`}>
-                    {t.live_enabled ? "Live" : "Task"}
+                    {t.live_enabled ? "实时" : "任务"}
                   </span>
                 </div>
               ))}
@@ -249,7 +249,7 @@ export function AppNav() {
       {/* Retractable Sidebar (Desktop Collapsible + Mobile Off-Canvas Drawer) */}
       <aside
         className={`app-sidebar${sidebarCollapsed ? " is-collapsed" : ""}${drawerOpen ? " drawer-open" : ""}`}
-        aria-label="Navigation sidebar"
+          aria-label="导航侧边栏"
       >
         <div className="sidebar-brand">
           <div
@@ -263,7 +263,7 @@ export function AppNav() {
                 handleNav("tasks");
               }
             }}
-            title="Go to main page"
+            title="返回主页"
           >
             <div className="sidebar-brand-mark" aria-hidden="true">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -278,24 +278,24 @@ export function AppNav() {
           <button
             className="btn-sidebar-toggle"
             onClick={toggleSidebar}
-            title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-            aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            title={sidebarCollapsed ? "展开侧边栏" : "折叠侧边栏"}
+            aria-label={sidebarCollapsed ? "展开侧边栏" : "折叠侧边栏"}
           >
             <CollapseIcon />
           </button>
         </div>
 
         <nav className="sidebar-nav">
-          <div className="sidebar-category-header">Tasks</div>
+          <div className="sidebar-category-header">任务</div>
           <button
             className={`sidebar-nav-item${section === "tasks" ? " is-active" : ""}`}
             onClick={() => handleNav("tasks")}
           >
             <div className="sidebar-nav-item-left">
               <TasksIcon />
-              <span>Active Tasks</span>
+              <span>进行中的任务</span>
             </div>
-            {liveTaskCount > 0 && <span className="badge-count live">{liveTaskCount} Live</span>}
+            {liveTaskCount > 0 && <span className="badge-count live">{liveTaskCount} 实时</span>}
           </button>
           <button
             className={`sidebar-nav-item${section === "paused" ? " is-active" : ""}`}
@@ -303,7 +303,7 @@ export function AppNav() {
           >
             <div className="sidebar-nav-item-left">
               <PausedIcon />
-              <span>Paused Tasks</span>
+              <span>已暂停任务</span>
             </div>
             {pausedTaskCount > 0 && <span className="badge-count paused">{pausedTaskCount}</span>}
           </button>
@@ -313,12 +313,12 @@ export function AppNav() {
           >
             <div className="sidebar-nav-item-left">
               <HistoryIcon />
-              <span>Completed Tasks</span>
+              <span>已完成任务</span>
             </div>
             {completedTaskCount > 0 && <span className="badge-count">{completedTaskCount}</span>}
           </button>
 
-          <div className="sidebar-category-header">Management</div>
+          <div className="sidebar-category-header">管理</div>
           <button
             className={`sidebar-nav-item${section === "bots" ? " is-active" : ""}`}
             onClick={() => handleNav("bots")}
@@ -335,20 +335,20 @@ export function AppNav() {
           >
             <div className="sidebar-nav-item-left">
               <SavedIcon />
-              <span>Saved Templates</span>
+              <span>已保存模板</span>
             </div>
           </button>
 
           {/* Sidebar Credits Card (Positioned directly below Saved Templates on mobile drawer) */}
           <div className="sidebar-credits-card">
             <div className="sidebar-credits-meta">
-              <span className="sidebar-credits-meta-label">Author</span>
+              <span className="sidebar-credits-meta-label">作者</span>
               <a
                 className="sidebar-credits-author-link"
                 href="https://github.com/iamLiquidX"
                 target="_blank"
                 rel="noopener noreferrer"
-                title="iamLiquidX on GitHub"
+                title="GitHub 上的 iamLiquidX"
               >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
                   <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
@@ -363,12 +363,12 @@ export function AppNav() {
                 href="https://t.me/liquidxprojects"
                 target="_blank"
                 rel="noopener noreferrer"
-                title="Support Chat on Telegram"
+                title="Telegram 支持群组"
               >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z" />
                 </svg>
-                <span>Support Chat</span>
+                <span>支持群组</span>
               </a>
 
               <a
@@ -376,12 +376,12 @@ export function AppNav() {
                 href="https://github.com/iamLiquidX/telegram-clone-worker"
                 target="_blank"
                 rel="noopener noreferrer"
-                title="View Source on GitHub"
+                title="在 GitHub 上查看源码"
               >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
                   <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
                 </svg>
-                <span>Source</span>
+                <span>源码</span>
               </a>
             </div>
           </div>
@@ -396,14 +396,14 @@ export function AppNav() {
                       <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                       <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                     </svg>
-                    <span>{source === "env" ? "Env Secured" : "Secured"}</span>
+                    <span>{source === "env" ? "环境变量保护" : "已保护"}</span>
                   </>
                 ) : (
                   <>
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                     </svg>
-                    <span>Unprotected</span>
+                    <span>未保护</span>
                   </>
                 )}
               </div>
@@ -413,27 +413,27 @@ export function AppNav() {
                   type="button"
                   className="sidebar-auth-btn"
                   onClick={() => logout()}
-                  title="Log out from admin console"
+                  title="退出管理控制台"
                 >
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
                     <polyline points="16 17 21 12 16 7" />
                     <line x1="21" y1="12" x2="9" y2="12" />
                   </svg>
-                  <span>Log Out</span>
+                  <span>退出登录</span>
                 </button>
               ) : (
                 <button
                   type="button"
                   className="sidebar-auth-btn"
                   onClick={() => setShowSetupModal(true)}
-                  title="Protect console with password"
+                  title="使用密码保护控制台"
                 >
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                     <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                   </svg>
-                  <span>Protect</span>
+                  <span>设置保护</span>
                 </button>
               )}
             </div>
@@ -442,18 +442,18 @@ export function AppNav() {
       </aside>
 
       {/* Mobile Bottom Navigation Bar (Clean 56px Bar) */}
-      <nav className="mobile-tabbar" aria-label="Mobile Navigation">
+      <nav className="mobile-tabbar" aria-label="移动端导航">
         <button
           className={`mobile-tab${section === "tasks" ? " active" : ""}`}
           onClick={() => handleNav("tasks")}
         >
           <TasksIcon />
-          <span>Active</span>
+          <span>进行中</span>
         </button>
         <button
           className="mobile-fab"
           onClick={() => handleNav("wizard")}
-          aria-label="Create new task"
+          aria-label="新建任务"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <line x1="12" y1="5" x2="12" y2="19" />
@@ -465,7 +465,7 @@ export function AppNav() {
           onClick={() => handleNav("completed")}
         >
           <HistoryIcon />
-          <span>History</span>
+          <span>历史记录</span>
         </button>
       </nav>
 

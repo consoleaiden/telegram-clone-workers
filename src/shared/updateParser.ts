@@ -13,7 +13,7 @@ export interface ParsedBotActivity {
 }
 
 /**
- * Parses raw Telegram updates into intuitive, plain-English activity summaries.
+ * Parses raw Telegram updates into intuitive, plain-language activity summaries.
  */
 export function parseTelegramUpdate(update: TelegramUpdate): ParsedBotActivity {
   const msg = update.message ?? update.channel_post ?? update.edited_message;
@@ -21,12 +21,12 @@ export function parseTelegramUpdate(update: TelegramUpdate): ParsedBotActivity {
   if (update.my_chat_member) {
     const mem = update.my_chat_member;
     const actor = mem.from.username ? `@${mem.from.username}` : mem.from.first_name;
-    const chatTitle = mem.chat.title ?? (mem.chat.username ? `@${mem.chat.username}` : `Chat #${mem.chat.id}`);
+    const chatTitle = mem.chat.title ?? (mem.chat.username ? `@${mem.chat.username}` : `聊天 #${mem.chat.id}`);
     return {
       update_id: update.update_id,
       kind: "member_event",
       icon: "👤",
-      summary: `Bot permissions changed to '${mem.new_chat_member.status}' by ${actor}`,
+      summary: `机器人权限被 ${actor} 变更为「${mem.new_chat_member.status}」`,
       chat_name: chatTitle,
       chat_type: mem.chat.type,
       sender_name: actor,
@@ -39,12 +39,12 @@ export function parseTelegramUpdate(update: TelegramUpdate): ParsedBotActivity {
     const targetUser = mem.new_chat_member.user.username
       ? `@${mem.new_chat_member.user.username}`
       : mem.new_chat_member.user.first_name;
-    const chatTitle = mem.chat.title ?? (mem.chat.username ? `@${mem.chat.username}` : `Chat #${mem.chat.id}`);
+    const chatTitle = mem.chat.title ?? (mem.chat.username ? `@${mem.chat.username}` : `聊天 #${mem.chat.id}`);
     return {
       update_id: update.update_id,
       kind: "member_event",
       icon: "👥",
-      summary: `User ${targetUser} became '${mem.new_chat_member.status}' in chat`,
+      summary: `用户 ${targetUser} 在聊天中的身份变为「${mem.new_chat_member.status}」`,
       chat_name: chatTitle,
       chat_type: mem.chat.type,
       date_iso: mem.date ? new Date(mem.date * 1000).toISOString() : undefined,
@@ -56,8 +56,8 @@ export function parseTelegramUpdate(update: TelegramUpdate): ParsedBotActivity {
       update_id: update.update_id,
       kind: "other",
       icon: "⚡",
-      summary: "System notification or callback event",
-      chat_name: "Unknown",
+      summary: "系统通知或回调事件",
+      chat_name: "未知",
       chat_type: "unknown",
     };
   }
@@ -67,10 +67,10 @@ export function parseTelegramUpdate(update: TelegramUpdate): ParsedBotActivity {
       ? `@${msg.from.username}`
       : msg.from.first_name
     : update.channel_post
-    ? "Channel Post"
-    : "Anonymous";
+    ? "频道帖"
+    : "匿名";
 
-  const chatTitle = msg.chat.title ?? (msg.chat.username ? `@${msg.chat.username}` : `Chat #${msg.chat.id}`);
+  const chatTitle = msg.chat.title ?? (msg.chat.username ? `@${msg.chat.username}` : `聊天 #${msg.chat.id}`);
   const isPost = Boolean(update.channel_post);
   const dateIso = msg.date ? new Date(msg.date * 1000).toISOString() : undefined;
 
@@ -83,7 +83,7 @@ export function parseTelegramUpdate(update: TelegramUpdate): ParsedBotActivity {
       update_id: update.update_id,
       kind: "command",
       icon: "⚙️",
-      summary: `Received command ${cmd}${args ? ` with arguments "${args.length > 30 ? `${args.slice(0, 30)}…` : args}"` : ""} from ${sender}`,
+      summary: `收到来自 ${sender} 的指令 ${cmd}${args ? `，参数为「${args.length > 30 ? `${args.slice(0, 30)}…` : args}」` : ""}`,
       chat_name: chatTitle,
       chat_type: msg.chat.type,
       sender_name: sender,
@@ -93,13 +93,13 @@ export function parseTelegramUpdate(update: TelegramUpdate): ParsedBotActivity {
 
   // 2. Documents / Files
   if (msg.document) {
-    const name = msg.document.file_name ?? "unnamed file";
-    const sizeStr = msg.document.file_size ? ` (${formatBytes(msg.document.file_size)})` : "";
+    const name = msg.document.file_name ?? "未命名文件";
+    const sizeStr = msg.document.file_size ? `（${formatBytes(msg.document.file_size)}）` : "";
     return {
       update_id: update.update_id,
       kind: "document",
       icon: "📁",
-      summary: `Received file '${name}'${sizeStr} from ${sender}`,
+      summary: `收到来自 ${sender} 的文件「${name}」${sizeStr}`,
       chat_name: chatTitle,
       chat_type: msg.chat.type,
       sender_name: sender,
@@ -109,13 +109,13 @@ export function parseTelegramUpdate(update: TelegramUpdate): ParsedBotActivity {
 
   // 3. Videos
   if (msg.video) {
-    const sizeStr = msg.video.file_size ? ` (${formatBytes(msg.video.file_size)})` : "";
-    const durStr = msg.video.duration ? ` [${msg.video.duration}s]` : "";
+    const sizeStr = msg.video.file_size ? `（${formatBytes(msg.video.file_size)}）` : "";
+    const durStr = msg.video.duration ? ` [${msg.video.duration} 秒]` : "";
     return {
       update_id: update.update_id,
       kind: "media",
       icon: "🎬",
-      summary: `Received video${durStr}${sizeStr} from ${sender}`,
+      summary: `收到来自 ${sender} 的视频${durStr}${sizeStr}`,
       chat_name: chatTitle,
       chat_type: msg.chat.type,
       sender_name: sender,
@@ -125,12 +125,12 @@ export function parseTelegramUpdate(update: TelegramUpdate): ParsedBotActivity {
 
   // 4. Photos
   if (msg.photo && msg.photo.length > 0) {
-    const captionSnippet = msg.caption ? `: "${msg.caption.length > 40 ? `${msg.caption.slice(0, 40)}…` : msg.caption}"` : "";
+    const captionSnippet = msg.caption ? `：${msg.caption.length > 40 ? `${msg.caption.slice(0, 40)}…` : msg.caption}` : "";
     return {
       update_id: update.update_id,
       kind: "media",
       icon: "🖼️",
-      summary: `Received photo${captionSnippet} from ${sender}`,
+      summary: `收到来自 ${sender} 的图片${captionSnippet}`,
       chat_name: chatTitle,
       chat_type: msg.chat.type,
       sender_name: sender,
@@ -140,13 +140,13 @@ export function parseTelegramUpdate(update: TelegramUpdate): ParsedBotActivity {
 
   // 5. Audio / Voice / Animation
   if (msg.audio) {
-    const name = msg.audio.file_name ?? "audio track";
-    const sizeStr = msg.audio.file_size ? ` (${formatBytes(msg.audio.file_size)})` : "";
+    const name = msg.audio.file_name ?? "音频文件";
+    const sizeStr = msg.audio.file_size ? `（${formatBytes(msg.audio.file_size)}）` : "";
     return {
       update_id: update.update_id,
       kind: "media",
       icon: "🎵",
-      summary: `Received audio '${name}'${sizeStr} from ${sender}`,
+      summary: `收到来自 ${sender} 的音频「${name}」${sizeStr}`,
       chat_name: chatTitle,
       chat_type: msg.chat.type,
       sender_name: sender,
@@ -155,12 +155,12 @@ export function parseTelegramUpdate(update: TelegramUpdate): ParsedBotActivity {
   }
 
   if (msg.voice) {
-    const durStr = msg.voice.duration ? ` (${msg.voice.duration}s)` : "";
+    const durStr = msg.voice.duration ? `（${msg.voice.duration} 秒）` : "";
     return {
       update_id: update.update_id,
       kind: "media",
       icon: "🎤",
-      summary: `Received voice message${durStr} from ${sender}`,
+      summary: `收到来自 ${sender} 的语音消息${durStr}`,
       chat_name: chatTitle,
       chat_type: msg.chat.type,
       sender_name: sender,
@@ -173,7 +173,7 @@ export function parseTelegramUpdate(update: TelegramUpdate): ParsedBotActivity {
       update_id: update.update_id,
       kind: "media",
       icon: "🎞️",
-      summary: `Received GIF / animation from ${sender}`,
+      summary: `收到来自 ${sender} 的 GIF / 动画`,
       chat_name: chatTitle,
       chat_type: msg.chat.type,
       sender_name: sender,
@@ -190,7 +190,7 @@ export function parseTelegramUpdate(update: TelegramUpdate): ParsedBotActivity {
       update_id: update.update_id,
       kind: "channel_post",
       icon: "📢",
-      summary: snippet ? `Published channel post: "${snippet}"` : "Published channel post",
+      summary: snippet ? `发布了频道帖：「${snippet}」` : "发布了频道帖",
       chat_name: chatTitle,
       chat_type: msg.chat.type,
       date_iso: dateIso,
@@ -201,7 +201,7 @@ export function parseTelegramUpdate(update: TelegramUpdate): ParsedBotActivity {
     update_id: update.update_id,
     kind: "text",
     icon: "💬",
-    summary: snippet ? `Message from ${sender}: "${snippet}"` : `Message received from ${sender}`,
+    summary: snippet ? `来自 ${sender} 的消息：「${snippet}」` : `收到来自 ${sender} 的消息`,
     chat_name: chatTitle,
     chat_type: msg.chat.type,
     sender_name: sender,

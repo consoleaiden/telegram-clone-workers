@@ -156,9 +156,9 @@ export async function runTick(env: Env): Promise<void> {
                   await appendActivityLog(env.DB, {
                     task_id: t.id,
                     kind: "live_forward",
-                    detail: `${fileDesc} · msg #${post.message_id} skipped: ${evalResult.reason}`,
+                    detail: `${fileDesc} · 消息 #${post.message_id} 已跳过：${evalResult.reason}`,
                     ok: false,
-                    error: `Filtered: ${evalResult.reason}`,
+                    error: `已过滤：${evalResult.reason}`,
                   });
                   continue;
                 }
@@ -177,7 +177,7 @@ export async function runTick(env: Env): Promise<void> {
                   await appendActivityLog(env.DB, {
                     task_id: t.id,
                     kind: "live_forward",
-                    detail: `⏳ Queued in buffer: ${fileDesc} · msg #${post.message_id} (waiting for backfill to finish)`,
+                    detail: `⏳ 已进入缓冲队列：${fileDesc} · 消息 #${post.message_id}（等待回填完成）`,
                     ok: true,
                   });
                 }
@@ -201,7 +201,7 @@ export async function runTick(env: Env): Promise<void> {
                 await appendActivityLog(env.DB, {
                   task_id: st.id,
                   kind: "live_forward",
-                  detail: "Stopped: Bot token unauthorized (401). Bot token may have been revoked or changed in @BotFather.",
+                  detail: "已停止：机器人 token 未授权（401）。该 token 可能已在 @BotFather 中被撤销或更改。",
                   ok: false,
                   error: "401 Unauthorized",
                 });
@@ -294,7 +294,7 @@ async function drainPendingMessagesForTask(env: Env, task: TaskSummary): Promise
       await appendActivityLog(env.DB, {
         task_id: task.id,
         kind: "live_forward",
-        detail: `Copied ${fileDesc} · msg #${item.message_id} (delivered from live queue)`,
+        detail: `已复制 ${fileDesc} · 消息 #${item.message_id}（从实时队列投递）`,
         ok: true,
       });
     } catch (e) {
@@ -322,7 +322,7 @@ async function drainPendingMessagesForTask(env: Env, task: TaskSummary): Promise
         await appendActivityLog(env.DB, {
           task_id: task.id,
           kind: "live_forward",
-          detail: `msg #${item.message_id}: not found in source, removed from queue`,
+          detail: `消息 #${item.message_id}：源中未找到，已从队列移除`,
           ok: false,
           error,
         });
@@ -370,7 +370,7 @@ async function processOneBatch(env: Env, task: TaskSummary, botParam?: BotRow, c
       await appendActivityLog(env.DB, {
         task_id: task.id,
         kind: "backfill_batch",
-        detail: `ids ${task.cursor}-${batchEnd}: rate limited, pausing bot for ${waitSeconds}s`,
+        detail: `ID ${task.cursor}-${batchEnd}：触发限流，机器人将暂停 ${waitSeconds} 秒`,
         ok: true,
       });
       return true;
@@ -383,7 +383,7 @@ async function processOneBatch(env: Env, task: TaskSummary, botParam?: BotRow, c
         await appendActivityLog(env.DB, {
           task_id: t.id,
           kind: "backfill_batch",
-          detail: `bot token unauthorized (401) — task auto-stopped (${t.processed} copied, ${t.failed} failed before stopping)`,
+          detail: `机器人 token 未授权（401）— 任务已自动停止（停止前已复制 ${t.processed}，失败 ${t.failed}）`,
           ok: false,
           error: e.message,
         });
@@ -420,7 +420,7 @@ async function processOneBatch(env: Env, task: TaskSummary, botParam?: BotRow, c
       await appendActivityLog(env.DB, {
         task_id: task.id,
         kind: "backfill_batch",
-        detail: `ids ${task.cursor}-${batchEnd}: ${e.reason} — task auto-stopped`,
+        detail: `ID ${task.cursor}-${batchEnd}：${e.reason} — 任务已自动停止`,
         ok: false,
         error: e.message,
       });
@@ -433,12 +433,12 @@ async function processOneBatch(env: Env, task: TaskSummary, botParam?: BotRow, c
       // to a healthy one from the DB/UI's perspective, retrying forever with
       // zero trace. Log every occurrence instead; these can be transient, so
       // don't advance the cursor or stop the task, just retry next tick.
-      const reason = e instanceof TelegramApiError ? e.reason : "unexpected error";
+      const reason = e instanceof TelegramApiError ? e.reason : "意外错误";
       const message = e instanceof Error ? e.message : String(e);
       await appendActivityLog(env.DB, {
         task_id: task.id,
         kind: "backfill_batch",
-        detail: `ids ${task.cursor}-${batchEnd}: ${reason}, resuming next tick`,
+        detail: `ID ${task.cursor}-${batchEnd}：${reason}，将在下一次 tick 继续`,
         ok: false,
         error: message,
       });
@@ -477,9 +477,9 @@ async function processOneBatch(env: Env, task: TaskSummary, botParam?: BotRow, c
   await appendActivityLog(env.DB, {
     task_id: task.id,
     kind: isLiveScope ? "live_forward" : "backfill_batch",
-    detail: `ids ${task.cursor}-${batchEnd}: ${succeeded} ok, ${skipped} skipped, took ${batchDurationMs}ms${justCompletedBackfill ? " (backfill complete)" : ""}`,
+    detail: `ID ${task.cursor}-${batchEnd}：成功 ${succeeded}，跳过 ${skipped}，耗时 ${batchDurationMs}ms${justCompletedBackfill ? "（回填完成）" : ""}`,
     ok: true,
-    error: skipped > 0 ? `${skipped} message(s) in this range skipped by Telegram (not found / can't be copied)` : undefined,
+    error: skipped > 0 ? `该范围内有 ${skipped} 条消息被 Telegram 跳过（未找到 / 无法复制）` : undefined,
   });
 
   // Throttled pruning: running subquery DELETEs on every single 60-msg batch

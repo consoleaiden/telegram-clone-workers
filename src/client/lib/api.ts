@@ -46,7 +46,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<Result<T>> 
       return {
         ok: false,
         errorCode: 401,
-        description: "Authentication session expired or invalid",
+        description: "登录会话已过期或无效",
         reason: "unauthorized",
       };
     }

@@ -136,7 +136,7 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
         setEnableFilters(true);
         setMaxFileSizeMb(String(Math.round(s.filter_max_size_bytes / (1024 * 1024))));
       }
-      toast.show("success", "Prefilled from saved template — review each step and continue manually.");
+      toast.show("success", "已从保存的模板预填——请逐步检查并手动继续。");
     })();
   }, [fromSavedId]);
 
@@ -150,7 +150,7 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
       setBotError(res.description);
       return;
     }
-    toast.show("success", `Verified @${res.data.bot_username}`);
+    toast.show("success", `已验证 @${res.data.bot_username}`);
     setSelectedBotId("");
     setPendingBot({ token: newToken.trim(), bot_id: res.data.bot_id, bot_username: res.data.bot_username });
     setBotActiveTasks(res.data.active_tasks ?? []);
@@ -191,7 +191,7 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
       inviteLink: revokeInviteLinkInput,
     });
     if (res.ok) {
-      toast.show("success", "Invite link revoked");
+      toast.show("success", "邀请链接已撤销");
       setRevokeInviteLinkInput("");
     } else toast.show("error", res.description);
   }
@@ -200,14 +200,14 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
     const uid = Number(userIdInput);
     if (!uid) return;
     const res = await api.post(`/api/chats/${encodeURIComponent(sourceChatId)}/ban?${botQuery()}`, { userId: uid });
-    toast.show(res.ok ? "success" : "error", res.ok ? "User banned" : res.description);
+    toast.show(res.ok ? "success" : "error", res.ok ? "用户已被封禁" : res.description);
   }
 
   async function unbanUser() {
     const uid = Number(userIdInput);
     if (!uid) return;
     const res = await api.post(`/api/chats/${encodeURIComponent(sourceChatId)}/unban?${botQuery()}`, { userId: uid });
-    toast.show(res.ok ? "success" : "error", res.ok ? "User unbanned" : res.description);
+    toast.show(res.ok ? "success" : "error", res.ok ? "用户已解除封禁" : res.description);
   }
 
   async function promoteUser() {
@@ -217,21 +217,21 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
       userId: uid,
       rights: { can_delete_messages: true, can_invite_users: true, can_restrict_members: true },
     });
-    toast.show(res.ok ? "success" : "error", res.ok ? "User promoted" : res.description);
+    toast.show(res.ok ? "success" : "error", res.ok ? "用户已提升" : res.description);
   }
 
   async function sendTestMessage() {
     const res = await api.post(`/api/chats/${encodeURIComponent(sourceChatId)}/send-test-message?${botQuery()}`, {
-      text: "Test message from Telegram Clone Worker",
+      text: "来自 Telegram Clone Worker 的测试消息",
     });
-    toast.show(res.ok ? "success" : "error", res.ok ? "Test message sent" : res.description);
+    toast.show(res.ok ? "success" : "error", res.ok ? "测试消息已发送" : res.description);
   }
 
   async function checkLatestId() {
     const res = await api.get<{ latestMessageId: number; cleanupOk: boolean }>(
       `/api/chats/${encodeURIComponent(sourceChatId)}/latest-message-id?${botQuery()}`,
     );
-    if (res.ok) toast.show("success", `Latest message id: ${res.data.latestMessageId}`);
+    if (res.ok) toast.show("success", `最新消息 ID：${res.data.latestMessageId}`);
     else toast.show("error", res.description);
   }
 
@@ -244,7 +244,7 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
       messageId: testMessageId ? Number(testMessageId) : undefined,
     });
     setTestingCopy(false);
-    setTestCopyResult(res.ok ? `Sent as message ${res.data.message_id} in destination` : `Failed: ${res.description}`);
+    setTestCopyResult(res.ok ? `已在目标聊天中作为消息 ${res.data.message_id} 发送` : `失败：${res.description}`);
   }
 
   async function createTask(allowDuplicate = false, saveTemplate = false) {
@@ -279,7 +279,7 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
     const res = await api.post<TaskSummary>(`/api/bots/${botPathId}/tasks`, body);
     setCreating(false);
     if (res.ok) {
-      toast.show("success", "Task created");
+      toast.show("success", "任务已创建");
       navigate(`task/${res.data.id}`);
       return;
     }
@@ -299,10 +299,10 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
     <div className="content-container">
       <PageHero
         title="新建任务"
-        subtitle="Connect a bot, point it at a chat, and configure copy mode"
+        subtitle="连接机器人、指定聊天并配置复制模式"
       >
         <button className="btn btn-secondary" onClick={() => navigate("")}>
-          Cancel
+          取消
         </button>
       </PageHero>
 
@@ -324,7 +324,7 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
             <div>
               <div className="field" style={{ marginBottom: 6 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                  <label style={{ margin: 0, fontWeight: 600 }}>Telegram Bot Token</label>
+                  <label style={{ margin: 0, fontWeight: 600 }}>Telegram 机器人 Token</label>
                   <a
                     href="https://t.me/BotFather"
                     target="_blank"
@@ -356,7 +356,7 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
                 disabled={!newToken.trim() || savingBot}
                 onClick={verifyNewBot}
               >
-                {savingBot ? "Verifying with Telegram…" : "Verify & Connect Bot"}
+                {savingBot ? "正在向 Telegram 验证…" : "验证并连接机器人"}
               </button>
             </div>
 
@@ -377,18 +377,18 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
                   }}
                 >
                   <div style={{ flex: 1, height: 1, background: "var(--border-subtle)" }} />
-                  <span>or choose from existing bots ({bots.length})</span>
+                  <span>或从已有机器人中选择（{bots.length}）</span>
                   <div style={{ flex: 1, height: 1, background: "var(--border-subtle)" }} />
                 </div>
 
                 <div className="field" style={{ marginBottom: 0 }}>
-                  <label>Select Saved Bot</label>
+                  <label>选择已保存的机器人</label>
                   <select
                     className="input"
                     value={selectedBotId}
                     onChange={(e) => handleSelectBot(e.target.value)}
                   >
-                    <option value="">Choose a previously saved bot…</option>
+                    <option value="">选择一个之前保存的机器人…</option>
                     {bots.map((b) => (
                       <option key={b.id} value={b.id}>
                         {b.label} (@{b.bot_username})
@@ -426,7 +426,7 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
                     )}
                   </div>
                   <div style={{ fontSize: 11.5, color: "var(--muted)", marginTop: 2 }}>
-                    {pendingBot ? "Verified new bot token (will be saved when task starts)" : "Saved bot connected"}
+                    {pendingBot ? "已验证新的机器人 token（任务启动时将保存）" : "已连接保存的机器人"}
                   </div>
                 </div>
               </div>
@@ -435,16 +435,16 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
                   className="btn btn-secondary btn-sm"
                   onClick={() => setShowActivityModal(true)}
                   style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
-                  title="Inspect what else this bot is doing"
+                  title="检查该机器人还在做什么"
                 >
-                  🔍 Check What Else Bot Is Doing
+                  🔍 检查该机器人还在做什么
                 </button>
                 <button
                   className="btn btn-secondary btn-sm"
                   onClick={handleClearBot}
-                  title="Choose a different bot"
+                  title="选择其他机器人"
                 >
-                  Change Bot
+                  更换机器人
                 </button>
               </div>
             </div>
@@ -486,11 +486,11 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
                       gap: 6,
                     }}
                   >
-                    <span>{hasRunningBackfill ? "⚠️ Active Backfill in Progress on this Bot" : "Currently Active Tasks on this Bot"}</span>
+                    <span>{hasRunningBackfill ? "⚠️ 该机器人正在执行回填" : "该机器人当前的进行中任务"}</span>
                     <span style={{ fontSize: 11.5, fontWeight: 500, color: "var(--muted)" }}>({botActiveTasks.length})</span>
                   </span>
                   <span className="badge badge-warning" style={{ fontSize: 11 }}>
-                    {hasRunningBackfill ? "Backfill Active" : "Active Tasks"}
+                    {hasRunningBackfill ? "回填进行中" : "进行中任务"}
                   </span>
                 </div>
 
@@ -507,17 +507,17 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
                     }}
                   >
                     <p style={{ margin: "0 0 6px", color: "var(--ink)" }}>
-                      This bot is currently executing historical message copying for{" "}
-                      <strong>{runningBackfillTasks.map((t) => getTaskDisplayInfo(t).title).join(", ")}</strong>.
-                      Telegram enforces strict message rate limits per bot token. Running multiple backfills concurrently on the same bot will trigger severe <strong>Telegram Flood Wait (429)</strong> throttling, pausing all tasks for that bot.
+                      该机器人当前正在执行历史消息复制，任务为{" "}
+                      <strong>{runningBackfillTasks.map((t) => getTaskDisplayInfo(t).title).join(", ")}</strong>。
+                      Telegram 对每个机器人 token 都有严格的消息速率限制。对同一个机器人并发执行多个回填会触发严重的 <strong>Telegram 限流（Flood Wait 429）</strong>，导致该机器人的所有任务暂停。
                     </p>
                     <div style={{ fontWeight: 600, color: "var(--warning)" }}>
-                      💡 Recommendation: Use <strong>one dedicated bot token per backfilling task</strong> for maximum copy speed, or wait until the current backfill completes.
+                      💡 建议：为获得最快的复制速度，<strong>每个回填任务使用一个专属机器人 token</strong>，或等待当前回填完成。
                     </div>
                   </div>
                 ) : (
                   <p className="text-muted" style={{ fontSize: 12, marginBottom: 10 }}>
-                    This bot is currently executing the following tasks. You can still assign new tasks to it, but high message volumes may share Telegram rate limits.
+                    该机器人当前正在执行以下任务。你仍然可以给它分配新任务，但高消息量可能会共用 Telegram 的速率限制。
                   </p>
                 )}
 
@@ -554,15 +554,15 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
                         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                           {isBtBackfilling ? (
                             <span className="badge badge-warning" style={{ fontSize: 10.5 }}>
-                              ⚡ Backfilling
+                              ⚡ 回填中
                             </span>
                           ) : (
                             <span className="badge badge-live" style={{ fontSize: 10.5 }}>
-                              {bt.live_enabled ? "Live" : "Backfill"}
+                              {bt.live_enabled ? "实时" : "回填"}
                             </span>
                           )}
                           <span className="text-muted" style={{ fontSize: 11 }}>
-                            {bt.processed} copied
+                            已复制 {bt.processed}
                           </span>
                         </div>
                       </div>
@@ -587,7 +587,7 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
               >
                 <span style={{ color: "var(--success)", fontWeight: 700 }}>✓</span>
                 <span>
-                  <strong>@{selectedBot?.bot_username ?? pendingBot?.bot_username}</strong> is currently <strong>idle</strong> (0 active tasks — completely free for new assignments).
+                  <strong>@{selectedBot?.bot_username ?? pendingBot?.bot_username}</strong> 当前处于 <strong>空闲</strong> 状态（0 个进行中任务——完全可用于新任务）。
                 </span>
               </div>
             )}
@@ -603,22 +603,22 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
               <span className={`step-pill ${sourceLookup ? "done" : "active"}`}>
                 {sourceLookup ? "✓" : "2"}
               </span>
-              <span>2. Source Chat / Channel</span>
+              <span>2. 源聊天 / 频道</span>
             </div>
           </div>
 
           <div className="field">
-            <label>Source Chat ID or @username</label>
+            <label>源聊天 ID 或 @用户名</label>
             <div className="row">
               <input
                 className="input"
                 style={{ flex: 1 }}
                 value={sourceChatId}
                 onChange={(e) => setSourceChatId(e.target.value)}
-                placeholder="e.g. -1001234567890 or @channel"
+                placeholder="例如 -1001234567890 或 @channel"
               />
               <button className="btn btn-secondary" disabled={!sourceChatId || lookingUpSource} onClick={lookupSource}>
-                {lookingUpSource ? "Checking…" : "Check"}
+                {lookingUpSource ? "检查中…" : "检查"}
               </button>
             </div>
           </div>
@@ -632,8 +632,8 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
                   {sourceLookup.chat.title ?? sourceLookup.chat.id}
                 </p>
                 <p className="text-muted" style={{ fontSize: 12, marginTop: 2 }}>
-                  {sourceLookup.chat.type} · bot status: <strong>{sourceLookup.botStatus}</strong>
-                  {sourceLookup.memberCount !== undefined && ` · ${sourceLookup.memberCount} members`}
+                  {sourceLookup.chat.type} · 机器人状态：<strong>{sourceLookup.botStatus}</strong>
+                  {sourceLookup.memberCount !== undefined && ` · ${sourceLookup.memberCount} 名成员`}
                 </p>
               </div>
 
@@ -651,12 +651,12 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
                   <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
                     <span style={{ fontSize: 18, marginTop: 1 }}>⚠️</span>
                     <div style={{ fontSize: 12.5, lineHeight: 1.5 }}>
-                      <strong style={{ color: "var(--warning)" }}>Group Chat Notice (Telegram Bot API Restriction):</strong>
+                      <strong style={{ color: "var(--warning)" }}>群聊来源提示（Telegram Bot API 限制）：</strong>
                       <p style={{ margin: "4px 0 6px", color: "var(--ink)" }}>
-                        Telegram prevents bots from seeing or copying messages sent by other bots in group chats (anti-loop policy). If this group relies on other bots to post files or messages, those bot-authored messages will not be copyable (they will be skipped as <em>"message to copy not found"</em>).
+                        Telegram 禁止机器人查看或复制群聊中由其他机器人发送的消息（防循环策略）。如果该群依赖其他机器人来发布文件或消息，这些由机器人发布的消息将无法被复制（会被作为<em>「未找到要复制的消息」</em>跳过）。
                       </p>
                       <span style={{ color: "var(--muted)", fontSize: 12 }}>
-                        💡 <strong>Recommendation:</strong> If you need complete file cloning, consider using a <strong>Telegram Channel</strong> as the source. Channel posts are published on behalf of the channel and can be copied freely by bots regardless of author.
+                        💡 <strong>建议：</strong>如果你需要完整地克隆文件，可以考虑使用 <strong>Telegram 频道</strong> 作为来源。频道帖是以频道名义发布的，无论作者是谁，机器人都可以自由复制。
                       </span>
                     </div>
                   </div>
@@ -676,22 +676,22 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
                     <span style={{ fontWeight: 600, fontSize: 13, color: "var(--warning)" }}>
-                      📋 Channel Task History ({sourceLookup.pastTasks.length} previous task{sourceLookup.pastTasks.length > 1 ? "s" : ""})
+                      📋 频道任务历史（{sourceLookup.pastTasks.length} 个历史任务）
                     </span>
-                    <span className="badge badge-warning" style={{ fontSize: 11 }}>Previously Added</span>
+                    <span className="badge badge-warning" style={{ fontSize: 11 }}>之前添加过</span>
                   </div>
                   <p className="text-muted" style={{ fontSize: 12, marginBottom: 12 }}>
-                    This channel was previously connected to the following tasks. Review what was done and the last copied message ID to prevent duplicate copying.
+                    该频道之前关联过以下任务。请查看已完成的工作和最后复制的消息 ID，以避免重复复制。
                   </p>
 
                   <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                     {sourceLookup.pastTasks.map((pt) => {
                       const statusLabel = pt.stop_reason
-                        ? `Stopped (${pt.stop_reason})`
+                        ? `已停止（${pt.stop_reason}）`
                         : pt.backfill_status === "complete"
-                        ? "Complete"
+                        ? "已完成"
                         : pt.live_enabled
-                        ? "Live Forwarding"
+                        ? "实时转发"
                         : pt.backfill_status;
 
                       return (
@@ -710,26 +710,26 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
                             <span className="badge" style={{ fontSize: 10.5 }}>{statusLabel}</span>
                           </div>
                           <div className="task-detail" style={{ fontSize: 11.5, color: "var(--muted)", marginBottom: 6 }}>
-                            <span>Dest: <strong>{pt.dest_chat_title ?? pt.dest_chat_id}</strong></span>
+                            <span>目标：<strong>{pt.dest_chat_title ?? pt.dest_chat_id}</strong></span>
                             <span>·</span>
-                            <span>Bot: @{pt.bot_username}</span>
+                            <span>机器人：@{pt.bot_username}</span>
                             <span>·</span>
-                            <span>Mode: {(pt.scope ?? "live").replace(/_/g, " ")}</span>
+                            <span>模式：{(pt.scope ?? "live").replace(/_/g, " ")}</span>
                           </div>
                           <div style={{ display: "flex", gap: 12, flexWrap: "wrap", fontSize: 12 }}>
                             <span>
-                              Copied: <strong>{pt.processed} msgs</strong>{pt.failed ? ` (${pt.failed} failed)` : ""}
+                              已复制：<strong>{pt.processed} 条消息</strong>{pt.failed ? `（${pt.failed} 条失败）` : ""}
                             </span>
                             <span>
-                              Last Copied Message ID:{" "}
+                              最后复制的消息 ID：{" "}
                               <strong style={{ color: "var(--accent)" }}>
-                                {pt.last_copied_message_id != null ? `#${pt.last_copied_message_id}` : "None"}
+                                {pt.last_copied_message_id != null ? `#${pt.last_copied_message_id}` : "无"}
                               </strong>
                             </span>
                             {pt.start_id != null && pt.end_id != null && (
-                              <span>Range: #{pt.start_id} → #{pt.end_id}</span>
+                              <span>范围：#${pt.start_id} → #{pt.end_id}</span>
                             )}
-                            <span>Created: {new Date(pt.created_at * 1000).toLocaleDateString()}</span>
+                            <span>创建于：{new Date(pt.created_at * 1000).toLocaleDateString()}</span>
                           </div>
                         </div>
                       );
@@ -753,7 +753,7 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
                             fontSize: 12,
                           }}
                         >
-                          💡 <strong>Duplication Safeguard:</strong> The highest message ID copied from this channel so far is <strong>#{maxLastId}</strong>. If you are configuring a new backfill, set your <strong>Start ID to #{maxLastId + 1}</strong> to avoid duplicating past messages.
+                          💡 <strong>防重复保护：</strong>目前从该频道复制的最大消息 ID 是 <strong>#{maxLastId}</strong>。如果你正在配置新的回填，请将 <strong>起始 ID 设为 #{maxLastId + 1}</strong> 以避免重复复制历史消息。
                         </div>
                       );
                     }
@@ -772,7 +772,7 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
                     color: "var(--ink)",
                   }}
                 >
-                  ✓ <strong>Fresh Channel:</strong> No previous tasks found for this source channel.
+                  ✓ <strong>全新频道：</strong>未找到该源频道的历史任务。
                 </div>
               )}
 
@@ -784,20 +784,20 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
                   className="accordion-header"
                   onClick={() => setShowAdminTools((s) => !s)}
                 >
-                  <span>🛠️ Advanced Admin Tools (Invites, Bans, Diagnostics)</span>
+                  <span>🛠️ 高级管理工具（邀请、封禁、诊断）</span>
                   <span>{showAdminTools ? "▲" : "▼"}</span>
                 </div>
                 {showAdminTools && (
                   <div className="accordion-body">
                     <div className="row">
                       <button className="btn btn-secondary btn-sm" onClick={generateInviteLink}>
-                        Generate invite link
+                        生成邀请链接
                       </button>
                       <button className="btn btn-secondary btn-sm" onClick={sendTestMessage}>
-                        Send test message
+                        发送测试消息
                       </button>
                       <button className="btn btn-secondary btn-sm" onClick={checkLatestId}>
-                        Check latest message ID
+                        检查最新消息 ID
                       </button>
                     </div>
                     {inviteLink && (
@@ -809,30 +809,30 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
                       <input
                         className="input"
                         style={{ maxWidth: 220 }}
-                        placeholder="Paste invite link to revoke"
+                        placeholder="粘贴要撤销的邀请链接"
                         value={revokeInviteLinkInput}
                         onChange={(e) => setRevokeInviteLinkInput(e.target.value)}
                       />
                       <button className="btn btn-secondary btn-sm" onClick={revokeInviteLink} disabled={!revokeInviteLinkInput}>
-                        Revoke link
+                        撤销链接
                       </button>
                     </div>
                     <div className="row">
                       <input
                         className="input"
                         style={{ maxWidth: 160 }}
-                        placeholder="User ID"
+                        placeholder="用户 ID"
                         value={userIdInput}
                         onChange={(e) => setUserIdInput(e.target.value)}
                       />
                       <button className="btn btn-secondary btn-sm" onClick={banUser}>
-                        Ban
+                        封禁
                       </button>
                       <button className="btn btn-secondary btn-sm" onClick={unbanUser}>
-                        Unban
+                        解除封禁
                       </button>
                       <button className="btn btn-secondary btn-sm" onClick={promoteUser}>
-                        Promote
+                        提升
                       </button>
                     </div>
                   </div>
@@ -851,22 +851,22 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
               <span className={`step-pill ${destLookup ? "done" : "active"}`}>
                 {destLookup ? "✓" : "3"}
               </span>
-              <span>3. Destination & Sync Mode</span>
+              <span>3. 目标聊天与同步模式</span>
             </div>
           </div>
 
           <div className="field">
-            <label>Destination chat</label>
+            <label>目标聊天</label>
             <div className="row">
               <input
                 className="input"
                 style={{ flex: 1 }}
                 value={destChatId}
                 onChange={(e) => setDestChatId(e.target.value)}
-                placeholder="e.g. -1009876543210 or @destchannel"
+                placeholder="例如 -1009876543210 或 @destchannel"
               />
               <button className="btn btn-secondary" disabled={!destChatId || lookingUpDest} onClick={lookupDest}>
-                {lookingUpDest ? "Checking…" : "Check"}
+                {lookingUpDest ? "检查中…" : "检查"}
               </button>
             </div>
           </div>
@@ -878,8 +878,8 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
               <p className="text-muted" style={{ fontSize: 13, marginBottom: 16 }}>
                 <strong>{destLookup.chat.title ?? destLookup.chat.id}</strong> —{" "}
                 {destLookup.capabilities.find((c) => c.key === "send_message")?.available
-                  ? "bot can post here ✓"
-                  : "bot cannot post here ✗"}
+                  ? "机器人可在此发送消息 ✓"
+                  : "机器人无法在此发送消息 ✗"}
               </p>
 
               {/* Destination Group Chat Warning for Future Operations */}
@@ -896,12 +896,12 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
                   <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
                     <span style={{ fontSize: 18, marginTop: 1 }}>ℹ️</span>
                     <div style={{ fontSize: 12.5, lineHeight: 1.5 }}>
-                      <strong style={{ color: "var(--info)" }}>Destination is a Group Chat:</strong>
+                      <strong style={{ color: "var(--info)" }}>目标是群聊：</strong>
                       <p style={{ margin: "4px 0 6px", color: "var(--ink)" }}>
-                        Messages copied here will be sent under this bot's identity. <strong>Notice for future operations:</strong> Telegram's anti-loop rule prevents bots from copying messages sent by other bots in groups. If you or another bot ever attempt to clone messages <em>out</em> of this destination group later, those bot-authored messages will not be copyable.
+                        复制到此处的消息将以该机器人的身份发送。<strong>关于后续操作的提醒：</strong>Telegram 的防循环规则禁止机器人复制群聊中由其他机器人发送的消息。如果你或另一个机器人以后尝试将消息从该目标群聊<em>克隆出去</em>，这些由机器人发布的消息将无法被复制。
                       </p>
                       <span style={{ color: "var(--muted)", fontSize: 12 }}>
-                        💡 <strong>Tip:</strong> If you are creating a permanent file archive or mirror intended to be cloned again by other bots in the future, a <strong>Telegram Channel</strong> is recommended.
+                        💡 <strong>提示：</strong>如果你要创建的是一个永久性的文件归档或镜像，且日后会被其他机器人再次克隆，建议使用 <strong>Telegram 频道</strong>。
                       </span>
                     </div>
                   </div>
@@ -909,11 +909,11 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
               )}
 
               <div className="field">
-                <label>Copy Scope</label>
+                <label>复制范围</label>
                 <select className="input" value={scope} onChange={(e) => setScope(e.target.value as TaskScope)}>
-                  <option value="live">New messages only (Live forward)</option>
-                  <option value="live_and_backfill">✨ Existing + New (Catch-Up Stream)</option>
-                  <option value="backfill_only">Existing only (One-time history backfill)</option>
+                  <option value="live">仅新消息（实时转发）</option>
+                  <option value="live_and_backfill">✨ 历史 + 新消息（追赶流）</option>
+                  <option value="backfill_only">仅历史消息（一次性历史回填）</option>
                 </select>
 
                 {wantsBackfill && hasRunningBackfill && (
@@ -930,22 +930,22 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
                     }}
                   >
                     <div style={{ fontWeight: 700, color: "var(--warning)", marginBottom: 4, display: "flex", alignItems: "center", gap: 6 }}>
-                      <span>⚠️ Flood Wait Advisory: Concurrent Backfill Detected</span>
+                      <span>⚠️ 限流提示：检测到并发回填</span>
                     </div>
                     <p style={{ margin: "0 0 8px" }}>
-                      <strong>@{selectedBot?.bot_username ?? pendingBot?.bot_username}</strong> is already actively running a historical backfill for{" "}
-                      <strong>{runningBackfillTasks.map((t) => getTaskDisplayInfo(t).title).join(", ")}</strong>. Assigning another backfill to this same bot token will split Telegram's copy quota and trigger <strong>Telegram Flood Wait (429)</strong> throttling.
+                      <strong>@{selectedBot?.bot_username ?? pendingBot?.bot_username}</strong> 已经在为{" "}
+                      <strong>{runningBackfillTasks.map((t) => getTaskDisplayInfo(t).title).join(", ")}</strong> 执行历史回填。再给同一个机器人 token 分配回填会瓜分 Telegram 的复制配额，并触发 <strong>Telegram 限流（Flood Wait 429）</strong>。
                     </p>
                     <ul style={{ margin: 0, paddingLeft: 18 }}>
                       <li>
-                        <strong>Recommended:</strong> Return to Step 1 and connect a separate bot token from{" "}
+                        <strong>推荐：</strong>返回第 1 步，从{" "}
                         <a href="https://t.me/BotFather" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)" }}>
                           @BotFather ↗
                         </a>{" "}
-                        (1 bot per backfill task prevents flood waits).
+                        连接一个单独的机器人 token（每个回填任务 1 个机器人可避免限流等待）。
                       </li>
                       <li style={{ marginTop: 3 }}>
-                        <strong>Alternative:</strong> Switch scope to <em>"New messages only (Live forward)"</em> if you only need upcoming messages.
+                        <strong>备选方案：</strong>如果你只需要后续的消息，可将范围切换为 <em>「仅新消息（实时转发）」</em>。
                       </li>
                     </ul>
                   </div>
@@ -954,25 +954,25 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
 
               {wantsBackfill && (
                 <div className="field">
-                  <label>Backfill Mode</label>
+                  <label>回填模式</label>
                   <div className="row" style={{ marginBottom: 8 }}>
                     <label className="row" style={{ gap: 6, cursor: "pointer" }}>
-                      <input type="radio" checked={backfillMode === "lastN"} onChange={() => setBackfillMode("lastN")} /> Last N messages
+                      <input type="radio" checked={backfillMode === "lastN"} onChange={() => setBackfillMode("lastN")} /> 最近 N 条消息
                     </label>
                     <label className="row" style={{ gap: 6, cursor: "pointer" }}>
-                      <input type="radio" checked={backfillMode === "range"} onChange={() => setBackfillMode("range")} /> Explicit ID range
+                      <input type="radio" checked={backfillMode === "range"} onChange={() => setBackfillMode("range")} /> 指定 ID 范围
                     </label>
                   </div>
                   {backfillMode === "lastN" ? (
-                    <input className="input" style={{ maxWidth: 160 }} value={n} onChange={(e) => setN(e.target.value)} placeholder="N messages" />
+                    <input className="input" style={{ maxWidth: 160 }} value={n} onChange={(e) => setN(e.target.value)} placeholder="N 条消息" />
                   ) : (
                     <div className="row">
-                      <input className="input" style={{ maxWidth: 160 }} value={startId} onChange={(e) => setStartId(e.target.value)} placeholder="Start ID" />
-                      <input className="input" style={{ maxWidth: 160 }} value={endId} onChange={(e) => setEndId(e.target.value)} placeholder="End ID" />
+                      <input className="input" style={{ maxWidth: 160 }} value={startId} onChange={(e) => setStartId(e.target.value)} placeholder="起始 ID" />
+                      <input className="input" style={{ maxWidth: 160 }} value={endId} onChange={(e) => setEndId(e.target.value)} placeholder="结束 ID" />
                     </div>
                   )}
                   <p className="text-muted" style={{ fontSize: 12, marginTop: 6 }}>
-                    ⚡ Bulk backfill pace: 60 messages/minute. Runs at maximum speed without filters to preserve complete chat history.
+                    ⚡ 批量回填节奏：每分钟 60 条消息。为保留完整的聊天历史，运行时以最高速度、不使用过滤器。
                   </p>
                 </div>
               )}
@@ -990,7 +990,7 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
                     <div style={{ fontWeight: 700, fontSize: 13.5, display: "flex", alignItems: "center", gap: 6 }}>
-                      <span>🔍 {scope === "live" ? "Live Message Filters" : "Live Stream Filters (Stage 2)"}</span>
+                      <span>🔍 {scope === "live" ? "实时消息过滤器" : "实时流过滤器（阶段 2）"}</span>
                     </div>
                     <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, cursor: "pointer", fontWeight: 600 }}>
                       <input
@@ -998,7 +998,7 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
                         checked={enableFilters}
                         onChange={(e) => setEnableFilters(e.target.checked)}
                       />
-                      Enable Filters
+                      启用过滤器
                     </label>
                   </div>
 
@@ -1016,13 +1016,13 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
                       }}
                     >
                       <div style={{ fontWeight: 600, color: "var(--info)", marginBottom: 3 }}>
-                        ℹ️ Two-Stage Catch-Up Stream
+                        ℹ️ 两阶段追赶流
                       </div>
                       <div>
-                        • <strong>Historical Backfill (Stage 1)</strong>: Existing messages up to the latest ID will be copied in bulk (60 msgs/min) <strong>without filters</strong> to ensure full speed and complete chat history.
+                        • <strong>历史回填（阶段 1）</strong>：截至最新 ID 的已有消息将以每分钟 60 条的速度批量复制，<strong>不使用过滤器</strong>，以确保最高速度和完整的聊天历史。
                       </div>
                       <div style={{ marginTop: 3 }}>
-                        • <strong>Live Messages (Stage 2)</strong>: All incoming messages after backfill will be evaluated against your filters below. While backfill is running, matching live messages are safely queued in order.
+                        • <strong>实时消息（阶段 2）</strong>：回填之后的所有新到消息都会按下方过滤器进行判定。回填运行期间，匹配的实时消息会按顺序安全排队。
                       </div>
                     </div>
                   )}
@@ -1031,14 +1031,14 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
                     <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 12 }}>
                       <div>
                         <label style={{ fontSize: 12, fontWeight: 600, color: "var(--ink)", display: "block", marginBottom: 6 }}>
-                          Allowed Media Types (Leave unchecked for all media)
+                          允许的媒体类型（全部不勾选表示所有媒体）
                         </label>
                         <div style={{ display: "flex", gap: 14, flexWrap: "wrap", fontSize: 12.5 }}>
                           {[
-                            { id: "document", label: "📄 Documents / Files" },
-                            { id: "video", label: "🎬 Videos" },
-                            { id: "photo", label: "🖼️ Photos" },
-                            { id: "audio", label: "🎵 Audio" },
+                            { id: "document", label: "📄 文档 / 文件" },
+                            { id: "video", label: "🎬 视频" },
+                            { id: "photo", label: "🖼️ 图片" },
+                            { id: "audio", label: "🎵 音频" },
                           ].map((mt) => (
                             <label key={mt.id} style={{ display: "flex", alignItems: "center", gap: 5, cursor: "pointer" }}>
                               <input
@@ -1057,31 +1057,31 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
                           ))}
                         </div>
                         <p className="text-muted" style={{ fontSize: 11.5, marginTop: 4 }}>
-                          Selecting specific media types automatically filters out text-only channel posts.
+                         选择特定媒体类型会自动过滤掉纯文本的频道帖。
                         </p>
                       </div>
 
                       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
                         <div className="field" style={{ margin: 0 }}>
-                          <label style={{ fontSize: 12 }}>Minimum File Size (MB)</label>
+                          <label style={{ fontSize: 12 }}>最小文件大小（MB）</label>
                           <input
                             className="input"
                             type="number"
                             min="0"
                             step="1"
-                            placeholder="e.g. 10 (ignore files < 10 MB)"
+                            placeholder="例如 10（忽略小于 10 MB 的文件）"
                             value={minFileSizeMb}
                             onChange={(e) => setMinFileSizeMb(e.target.value)}
                           />
                         </div>
                         <div className="field" style={{ margin: 0 }}>
-                          <label style={{ fontSize: 12 }}>Maximum File Size (MB, optional)</label>
+                          <label style={{ fontSize: 12 }}>最大文件大小（MB，可选）</label>
                           <input
                             className="input"
                             type="number"
                             min="0"
                             step="1"
-                            placeholder="e.g. 500 (ignore files > 500 MB)"
+                            placeholder="例如 500（忽略大于 500 MB 的文件）"
                             value={maxFileSizeMb}
                             onChange={(e) => setMaxFileSizeMb(e.target.value)}
                           />
@@ -1096,12 +1096,12 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
                 <input
                   className="input"
                   style={{ maxWidth: 180 }}
-                  placeholder="Message ID (optional)"
+                  placeholder="消息 ID（可选）"
                   value={testMessageId}
                   onChange={(e) => setTestMessageId(e.target.value)}
                 />
                 <button className="btn btn-secondary" disabled={testingCopy} onClick={runTestCopy}>
-                  {testingCopy ? "Sending…" : "Send test copy"}
+                  {testingCopy ? "发送中…" : "发送测试复制"}
                 </button>
               </div>
               {testCopyResult && (
@@ -1114,13 +1114,13 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
                 <div className="permission-banner" style={{ marginTop: 16 }}>
                   <span>⚠</span>
                   <div>
-                    A task for this source → destination already exists ("{duplicate.label}").{" "}
+                    从该源到该目标的任务已存在（"{duplicate.label}"）。{" "}
                     <button
                       className="btn btn-danger btn-sm"
                       style={{ marginTop: 8 }}
                       onClick={() => createTask(true, lastSaveTemplate)}
                     >
-                      Create anyway
+                      仍然创建
                     </button>
                   </div>
                 </div>
@@ -1128,10 +1128,10 @@ export function TaskWizardPage({ fromSavedId }: { fromSavedId?: string }) {
 
               <div className="row" style={{ marginTop: 24 }}>
                 <button className="btn btn-primary" disabled={creating} onClick={() => createTask(false, false)}>
-                  {creating && !lastSaveTemplate ? "Creating…" : "Create Task"}
+                  {creating && !lastSaveTemplate ? "创建中…" : "创建任务"}
                 </button>
                 <button className="btn btn-secondary" disabled={creating} onClick={() => createTask(false, true)}>
-                  {creating && lastSaveTemplate ? "Saving…" : "Save & Start"}
+                  {creating && lastSaveTemplate ? "保存中…" : "保存并启动"}
                 </button>
               </div>
             </>

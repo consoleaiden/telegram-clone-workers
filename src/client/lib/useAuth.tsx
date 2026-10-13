@@ -67,7 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await checkStatus();
       return { ok: true };
     }
-    return { ok: false, error: res.description || "Invalid password" };
+    return { ok: false, error: res.description || "密码无效" };
   };
 
   const setup = async (password: string): Promise<{ ok: boolean; error?: string }> => {
@@ -78,7 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await checkStatus();
       return { ok: true };
     }
-    return { ok: false, error: res.description || "Failed to set password" };
+    return { ok: false, error: res.description || "设置密码失败" };
   };
 
   const skipSetup = () => {
@@ -103,7 +103,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await checkStatus();
       return { ok: true };
     }
-    return { ok: false, error: res.description || "Failed to remove password" };
+    return { ok: false, error: res.description || "移除密码失败" };
   };
 
   return (
